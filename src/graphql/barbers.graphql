@@ -1,0 +1,193 @@
+query GetBarbers {
+  barbers {
+    id
+    firstName
+    lastName
+    email
+    phone
+    avatar
+    bio
+    experienceYears
+    specialties
+    role
+    isActive
+    createdAt
+    updatedAt
+    averageRating
+    totalRatings
+    barberShops {
+      id
+      name
+      address
+      city
+      state
+      country
+      phone
+      email
+      website
+      avatar
+      coverPhoto
+    }
+  }
+}
+
+query GetBarber($id: ID!) {
+  barber(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    phone
+    avatar
+    bio
+    experienceYears
+    specialties
+    role
+    isActive
+    createdAt
+    updatedAt
+    averageRating
+    totalRatings
+    barberShops {
+      id
+      name
+      address
+      city
+      state
+      country
+      phone
+      email
+      website
+      avatar
+      coverPhoto
+    }
+  }
+}
+
+query SearchBarbers($name: String, $city: String, $state: String, $specialty: String, $minExperience: Int, $minRating: Float) {
+  searchBarbers(name: $name, city: $city, state: $state, specialty: $specialty, minExperience: $minExperience, minRating: $minRating) {
+    id
+    firstName
+    lastName
+    email
+    phone
+    avatar
+    bio
+    experienceYears
+    specialties
+    role
+    isActive
+    createdAt
+    updatedAt
+    averageRating
+    totalRatings
+    barberShops {
+      id
+      name
+      address
+      city
+      state
+      country
+      phone
+      email
+      website
+      avatar
+      coverPhoto
+    }
+  }
+}
+
+query GetAvailableSpecialties {
+  getAvailableSpecialties
+}
+
+query GetBarbersByShop($shopId: ID!) {
+  barbersByShop(shopId: $shopId) {
+    id
+    firstName
+    lastName
+    email
+    phone
+    avatar
+    bio
+    experienceYears
+    specialties
+    role
+    isActive
+    createdAt
+    updatedAt
+    averageRating
+    totalRatings
+    barberShops {
+      id
+      name
+      address
+      city
+      state
+      country
+      phone
+      email
+      website
+      avatar
+      coverPhoto
+    }
+  }
+}
+
+query GetBarberWorkingHours($barberId: ID!) {
+  barberWorkingHours(barberId: $barberId) {
+    id
+    dayOfWeek
+    startTime
+    endTime
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+query GetRatingsByBarber($entityId: ID!) {
+  ratingsByEntity(entityId: $entityId, entityType: BARBER) {
+    id
+    rating
+    comment
+    createdAt
+    updatedAt
+    rater {
+      id
+      firstName
+      lastName
+      avatar
+    }
+  }
+}
+
+query GetBarberAverageRating($entityId: ID!) {
+  averageRating(entityId: $entityId, entityType: BARBER)
+}
+
+mutation UpdateBarber($id: ID!, $input: UpdateBarberInput!) {
+  updateBarber(id: $id, input: $input) {
+    id
+    firstName
+    lastName
+    phone
+    avatar
+    bio
+    experienceYears
+    specialties
+    updatedAt
+  }
+}
+
+mutation ChangeBarberPassword($id: ID!, $currentPassword: String!, $newPassword: String!) {
+  changeBarberPassword(id: $id, currentPassword: $currentPassword, newPassword: $newPassword)
+}
+
+mutation DeactivateBarber($id: ID!) {
+  deactivateBarber(id: $id) {
+    id
+    isActive
+    updatedAt
+  }
+}

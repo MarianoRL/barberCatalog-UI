@@ -1,0 +1,35 @@
+query GetCategories {
+  categories {
+    id
+    name
+    description
+    icon
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+query GetCategory($id: ID!) {
+  category(id: $id) {
+    id
+    name
+    description
+    icon
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+query GetActiveCategories {
+  activeCategories {
+    id
+    name
+    description
+    icon
+    isActive
+    createdAt
+    updatedAt
+  }
+}

@@ -1,0 +1,379 @@
+query GetBarberShops {
+  barberShops {
+    id
+    name
+    description
+    address
+    city
+    state
+    country
+    zipCode
+    latitude
+    longitude
+    phone
+    email
+    website
+    avatar
+    coverPhoto
+    isActive
+    createdAt
+    updatedAt
+    barbers {
+      id
+      firstName
+      lastName
+      avatar
+      experienceYears
+      specialties
+      averageRating
+      totalRatings
+    }
+    services {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+    averageRating
+    totalRatings
+    favoriteCount
+  }
+}
+
+query GetBarberShop($id: ID!) {
+  barberShop(id: $id) {
+    id
+    name
+    description
+    address
+    city
+    state
+    country
+    zipCode
+    latitude
+    longitude
+    phone
+    email
+    website
+    avatar
+    coverPhoto
+    isActive
+    createdAt
+    updatedAt
+    barbers {
+      id
+      firstName
+      lastName
+      avatar
+      bio
+      experienceYears
+      specialties
+      averageRating
+      totalRatings
+      isActive
+    }
+    services {
+      id
+      name
+      description
+      price
+      durationMinutes
+      isActive
+      category {
+        id
+        name
+        icon
+      }
+      barber {
+        id
+        firstName
+        lastName
+      }
+    }
+    averageRating
+    totalRatings
+    favoriteCount
+  }
+}
+
+query SearchBarberShops($name: String, $city: String, $state: String, $minRating: Float, $serviceCategory: String) {
+  searchBarberShops(name: $name, city: $city, state: $state, minRating: $minRating, serviceCategory: $serviceCategory) {
+    id
+    name
+    description
+    address
+    city
+    state
+    country
+    zipCode
+    latitude
+    longitude
+    phone
+    email
+    website
+    avatar
+    coverPhoto
+    isActive
+    createdAt
+    updatedAt
+    barbers {
+      id
+      firstName
+      lastName
+      avatar
+      experienceYears
+      specialties
+      averageRating
+      totalRatings
+    }
+    services {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+    averageRating
+    totalRatings
+    favoriteCount
+  }
+}
+
+query GetAvailableCities {
+  getAvailableCities
+}
+
+query GetAvailableStates {
+  getAvailableStates
+}
+
+query GetBarberShopsByLocation($city: String, $state: String) {
+  barberShopsByLocation(city: $city, state: $state) {
+    id
+    name
+    description
+    address
+    city
+    state
+    country
+    zipCode
+    latitude
+    longitude
+    phone
+    email
+    website
+    avatar
+    coverPhoto
+    isActive
+    createdAt
+    updatedAt
+    barbers {
+      id
+      firstName
+      lastName
+      avatar
+      experienceYears
+      specialties
+      averageRating
+      totalRatings
+    }
+    services {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+    averageRating
+    totalRatings
+    favoriteCount
+  }
+}
+
+query GetBarberShopsNearby($latitude: Float!, $longitude: Float!, $radiusKm: Float!) {
+  barberShopsNearby(latitude: $latitude, longitude: $longitude, radiusKm: $radiusKm) {
+    id
+    name
+    description
+    address
+    city
+    state
+    country
+    zipCode
+    latitude
+    longitude
+    phone
+    email
+    website
+    avatar
+    coverPhoto
+    isActive
+    createdAt
+    updatedAt
+    barbers {
+      id
+      firstName
+      lastName
+      avatar
+      experienceYears
+      specialties
+      averageRating
+      totalRatings
+    }
+    services {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+    averageRating
+    totalRatings
+    favoriteCount
+  }
+}
+
+query GetBarberShopWorkingHours($barberShopId: ID!) {
+  barberShopWorkingHours(barberShopId: $barberShopId) {
+    id
+    dayOfWeek
+    startTime
+    endTime
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+query GetRatingsByBarberShop($entityId: ID!) {
+  ratingsByEntity(entityId: $entityId, entityType: BARBERSHOP) {
+    id
+    rating
+    comment
+    createdAt
+    updatedAt
+    rater {
+      id
+      firstName
+      lastName
+      avatar
+    }
+  }
+}
+
+query GetBarberShopAverageRating($entityId: ID!) {
+  averageRating(entityId: $entityId, entityType: BARBERSHOP)
+}
+
+query GetFavorites($userId: ID!) {
+  favorites(userId: $userId) {
+    id
+    createdAt
+    barberShop {
+      id
+      name
+      description
+      address
+      city
+      state
+      avatar
+      coverPhoto
+      averageRating
+      totalRatings
+    }
+  }
+}
+
+query IsFavorite($userId: ID!, $shopId: ID!) {
+  isFavorite(userId: $userId, shopId: $shopId)
+}
+
+mutation AddFavorite($userId: ID!, $shopId: ID!) {
+  addFavorite(userId: $userId, shopId: $shopId) {
+    id
+    createdAt
+    barberShop {
+      id
+      name
+    }
+  }
+}
+
+mutation RemoveFavorite($userId: ID!, $shopId: ID!) {
+  removeFavorite(userId: $userId, shopId: $shopId)
+}
+
+mutation CreateBarberShop($input: CreateBarberShopInput!) {
+  createBarberShop(input: $input) {
+    id
+    name
+    description
+    address
+    city
+    state
+    country
+    zipCode
+    latitude
+    longitude
+    phone
+    email
+    website
+    avatar
+    coverPhoto
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateBarberShop($id: ID!, $input: UpdateBarberShopInput!) {
+  updateBarberShop(id: $id, input: $input) {
+    id
+    name
+    description
+    address
+    city
+    state
+    country
+    zipCode
+    latitude
+    longitude
+    phone
+    email
+    website
+    avatar
+    coverPhoto
+    isActive
+    createdAt
+    updatedAt
+  }
+}
+
+mutation DeactivateBarberShop($id: ID!) {
+  deactivateBarberShop(id: $id) {
+    id
+    isActive
+    updatedAt
+  }
+}

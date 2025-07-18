@@ -1,0 +1,57 @@
+# Service Mutations
+mutation CreateManagementService($input: CreateManagementServiceInput!) {
+  createManagementService(input: $input) {
+    id
+    name
+    description
+    price
+    durationMinutes
+    isActive
+    createdAt
+    updatedAt
+    barberShop {
+      id
+      name
+    }
+    category {
+      id
+      name
+    }
+    barber {
+      id
+      firstName
+      lastName
+    }
+  }
+}
+
+mutation UpdateManagementService($id: ID!, $input: UpdateManagementServiceInput!) {
+  updateManagementService(id: $id, input: $input) {
+    id
+    name
+    description
+    price
+    durationMinutes
+    updatedAt
+  }
+}
+
+mutation AssignServiceToBarber($managementServiceId: ID!, $barberId: ID!) {
+  assignManagementServiceToBarber(managementServiceId: $managementServiceId, barberId: $barberId) {
+    id
+    name
+    barber {
+      id
+      firstName
+      lastName
+    }
+  }
+}
+
+mutation DeactivateManagementService($id: ID!) {
+  deactivateManagementService(id: $id) {
+    id
+    isActive
+    updatedAt
+  }
+}

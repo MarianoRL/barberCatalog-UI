@@ -1,0 +1,296 @@
+query GetOwnerAppointments($ownerId: ID!) {
+  ownerAppointments(ownerId: $ownerId) {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    cancelReason
+    createdAt
+    updatedAt
+    user {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+    }
+    barber {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+      experienceYears
+      specialties
+    }
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+      phone
+      email
+      avatar
+    }
+    managementService {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+  }
+}
+
+query GetOwnerAppointmentsByBarberShop($ownerId: ID!, $barberShopId: ID!) {
+  ownerAppointmentsByBarberShop(ownerId: $ownerId, barberShopId: $barberShopId) {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    cancelReason
+    createdAt
+    updatedAt
+    user {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+    }
+    barber {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+      experienceYears
+      specialties
+    }
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+      phone
+      email
+      avatar
+    }
+    managementService {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+  }
+}
+
+query GetOwnerAppointmentsByBarber($ownerId: ID!, $barberId: ID!) {
+  ownerAppointmentsByBarber(ownerId: $ownerId, barberId: $barberId) {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    cancelReason
+    createdAt
+    updatedAt
+    user {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+    }
+    barber {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+      experienceYears
+      specialties
+    }
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+      phone
+      email
+      avatar
+    }
+    managementService {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+  }
+}
+
+query GetOwnerAppointmentsByStatus($ownerId: ID!, $status: BookingStatus!) {
+  ownerAppointmentsByStatus(ownerId: $ownerId, status: $status) {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    cancelReason
+    createdAt
+    updatedAt
+    user {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+    }
+    barber {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+      experienceYears
+      specialties
+    }
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+      phone
+      email
+      avatar
+    }
+    managementService {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+  }
+}
+
+query GetOwnerAppointmentsWithFilters(
+  $ownerId: ID!
+  $barberShopId: ID
+  $barberId: ID
+  $status: BookingStatus
+  $startDate: String
+  $endDate: String
+) {
+  ownerAppointmentsWithFilters(
+    ownerId: $ownerId
+    barberShopId: $barberShopId
+    barberId: $barberId
+    status: $status
+    startDate: $startDate
+    endDate: $endDate
+  ) {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    cancelReason
+    createdAt
+    updatedAt
+    user {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+    }
+    barber {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+      experienceYears
+      specialties
+    }
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+      phone
+      email
+      avatar
+    }
+    managementService {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+  }
+}
+
+query GetOwnerAppointmentStats($ownerId: ID!) {
+  ownerAppointmentStats(ownerId: $ownerId) {
+    totalAppointments
+    pendingAppointments
+    confirmedAppointments
+    completedAppointments
+    cancelledAppointments
+    noShowAppointments
+    totalRevenue
+    averageAppointmentValue
+  }
+}

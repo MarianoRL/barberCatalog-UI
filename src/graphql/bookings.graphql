@@ -1,0 +1,293 @@
+query GetBookings {
+  bookings {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    cancelReason
+    createdAt
+    updatedAt
+    user {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+    }
+    barber {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+      bio
+      experienceYears
+      specialties
+      barberShop {
+        id
+        name
+        address
+        city
+        state
+      }
+    }
+    managementService {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+  }
+}
+
+query GetBookingsByUser($userId: ID!) {
+  bookingsByUser(userId: $userId) {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    cancelReason
+    createdAt
+    updatedAt
+    barber {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+      bio
+      experienceYears
+      specialties
+      barberShop {
+        id
+        name
+        address
+        city
+        state
+      }
+    }
+    managementService {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+  }
+}
+
+query GetBookingsByBarber($barberId: ID!) {
+  bookingsByBarber(barberId: $barberId) {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    cancelReason
+    createdAt
+    updatedAt
+    user {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+    }
+    managementService {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+  }
+}
+
+query GetUpcomingBookings($userId: ID!) {
+  upcomingBookings(userId: $userId) {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    createdAt
+    updatedAt
+    barber {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+      bio
+      experienceYears
+      specialties
+      barberShop {
+        id
+        name
+        address
+        city
+        state
+      }
+    }
+    managementService {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+  }
+}
+
+query GetUpcomingBookingsByBarber($barberId: ID!) {
+  upcomingBookingsByBarber(barberId: $barberId) {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    createdAt
+    updatedAt
+    user {
+      id
+      firstName
+      lastName
+      email
+      phone
+      avatar
+    }
+    managementService {
+      id
+      name
+      description
+      price
+      durationMinutes
+      category {
+        id
+        name
+        icon
+      }
+    }
+  }
+}
+
+mutation UpdateBookingStatus($id: ID!, $status: BookingStatus!, $reason: String) {
+  updateBookingStatus(id: $id, status: $status, reason: $reason) {
+    id
+    status
+    cancelReason
+    updatedAt
+  }
+}
+
+mutation ConfirmBooking($id: ID!) {
+  confirmBooking(id: $id) {
+    id
+    status
+    updatedAt
+  }
+}
+
+mutation CancelBooking($id: ID!, $reason: String) {
+  cancelBooking(id: $id, reason: $reason) {
+    id
+    status
+    cancelReason
+    updatedAt
+  }
+}
+
+mutation StartBooking($id: ID!) {
+  startBooking(id: $id) {
+    id
+    status
+    updatedAt
+  }
+}
+
+mutation CompleteBooking($id: ID!) {
+  completeBooking(id: $id) {
+    id
+    status
+    updatedAt
+  }
+}
+
+mutation MarkAsNoShow($id: ID!) {
+  markAsNoShow(id: $id) {
+    id
+    status
+    updatedAt
+  }
+}
+
+mutation RescheduleBooking($id: ID!, $newStartTime: String!) {
+  rescheduleBooking(id: $id, newStartTime: $newStartTime) {
+    id
+    startTime
+    endTime
+    status
+    updatedAt
+  }
+}
+
+mutation CreateBooking($userId: ID!, $barberId: ID!, $serviceId: ID!, $startTime: String!, $notes: String) {
+  createBooking(userId: $userId, barberId: $barberId, serviceId: $serviceId, startTime: $startTime, notes: $notes) {
+    id
+    startTime
+    endTime
+    status
+    totalPrice
+    notes
+    createdAt
+    user {
+      id
+      firstName
+      lastName
+    }
+    barber {
+      id
+      firstName
+      lastName
+    }
+    managementService {
+      id
+      name
+      price
+      durationMinutes
+    }
+  }
+}

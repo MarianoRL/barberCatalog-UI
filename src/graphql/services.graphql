@@ -1,0 +1,207 @@
+query GetManagementServices {
+  managementServices {
+    id
+    name
+    description
+    price
+    durationMinutes
+    isActive
+    createdAt
+    updatedAt
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+    }
+    category {
+      id
+      name
+      icon
+    }
+    barber {
+      id
+      firstName
+      lastName
+      avatar
+    }
+  }
+}
+
+query GetManagementService($id: ID!) {
+  managementService(id: $id) {
+    id
+    name
+    description
+    price
+    durationMinutes
+    isActive
+    createdAt
+    updatedAt
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+    }
+    category {
+      id
+      name
+      icon
+    }
+    barber {
+      id
+      firstName
+      lastName
+      avatar
+    }
+  }
+}
+
+query GetManagementServicesByShop($shopId: ID!) {
+  managementServicesByShop(shopId: $shopId) {
+    id
+    name
+    description
+    price
+    durationMinutes
+    isActive
+    createdAt
+    updatedAt
+    category {
+      id
+      name
+      icon
+    }
+    barber {
+      id
+      firstName
+      lastName
+      avatar
+    }
+  }
+}
+
+query GetManagementServicesByBarber($barberId: ID!) {
+  managementServicesByBarber(barberId: $barberId) {
+    id
+    name
+    description
+    price
+    durationMinutes
+    isActive
+    createdAt
+    updatedAt
+    category {
+      id
+      name
+      icon
+    }
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+    }
+  }
+}
+
+query GetManagementServicesByCategory($categoryId: ID!) {
+  managementServicesByCategory(categoryId: $categoryId) {
+    id
+    name
+    description
+    price
+    durationMinutes
+    isActive
+    createdAt
+    updatedAt
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+    }
+    barber {
+      id
+      firstName
+      lastName
+      avatar
+    }
+  }
+}
+
+query GetManagementServicesByPriceRange($minPrice: Float!, $maxPrice: Float!) {
+  managementServicesByPriceRange(minPrice: $minPrice, maxPrice: $maxPrice) {
+    id
+    name
+    description
+    price
+    durationMinutes
+    isActive
+    createdAt
+    updatedAt
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+    }
+    category {
+      id
+      name
+      icon
+    }
+    barber {
+      id
+      firstName
+      lastName
+      avatar
+    }
+  }
+}
+
+query SearchServices($name: String, $categoryName: String, $minPrice: Float, $maxPrice: Float, $minDuration: Int, $maxDuration: Int, $city: String) {
+  searchServices(name: $name, categoryName: $categoryName, minPrice: $minPrice, maxPrice: $maxPrice, minDuration: $minDuration, maxDuration: $maxDuration, city: $city) {
+    id
+    name
+    description
+    price
+    durationMinutes
+    isActive
+    createdAt
+    updatedAt
+    category {
+      id
+      name
+      description
+      icon
+    }
+    barberShop {
+      id
+      name
+      address
+      city
+      state
+      avatar
+    }
+    barber {
+      id
+      firstName
+      lastName
+      avatar
+    }
+  }
+}
+
+query GetServicePriceRange {
+  getServicePriceRange {
+    minPrice
+    maxPrice
+  }
+}
