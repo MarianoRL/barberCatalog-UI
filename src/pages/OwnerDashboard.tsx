@@ -186,6 +186,39 @@ const UNASSIGN_BARBER_FROM_SHOP = gql`
   }
 `;
 
+const CREATE_BARBER_SHOP = gql`
+  mutation CreateBarberShop($input: CreateBarberShopInput!) {
+    createBarberShop(input: $input) {
+      id
+      name
+      description
+      address
+      city
+      state
+      country
+      zipCode
+      phone
+      email
+      website
+      avatar
+      coverPhoto
+      isActive
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+const DELETE_BARBER_SHOP = gql`
+  mutation DeactivateBarberShop($id: ID!) {
+    deactivateBarberShop(id: $id) {
+      id
+      isActive
+      updatedAt
+    }
+  }
+`;
+
 interface BarberShop {
   id: string;
   name: string;
@@ -228,9 +261,24 @@ const OwnerDashboard: React.FC = () => {
   const [ownerId, setOwnerId] = useState<string | null>(null);
   const [selectedShop, setSelectedShop] = useState<BarberShop | null>(null);
   const [editShopOpen, setEditShopOpen] = useState(false);
+  const [createShopOpen, setCreateShopOpen] = useState(false);
+  const [deleteShopOpen, setDeleteShopOpen] = useState(false);
   const [manageBarbersOpen, setManageBarbersOpen] = useState(false);
   const [assignBarberOpen, setAssignBarberOpen] = useState(false);
   const [editShopForm, setEditShopForm] = useState<Partial<BarberShop>>({});
+  const [createShopForm, setCreateShopForm] = useState<Partial<BarberShop>>({ country: 'USA' });
+  const [shopToDelete, setShopToDelete] = useState<BarberShop | null>(null);
+  const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null);
+
+  // Auto-hide notifications after 5 seconds
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   // Get owner info from localStorage
   useEffect(() => {
@@ -256,23 +304,28 @@ const OwnerDashboard: React.FC = () => {
   const { data: shopsData, loading: shopsLoading, error: shopsError, refetch: refetchShops } = useQuery(GET_OWNER_BARBER_SHOPS, {
     variables: { ownerId: ownerId || '' },
     skip: !ownerId,
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 30000 // Poll every 30 seconds
   });
 
   const { data: shopBarbersData, loading: shopBarbersLoading, refetch: refetchShopBarbers } = useQuery(GET_SHOP_BARBERS, {
     variables: { ownerId: ownerId || '', barberShopId: selectedShop?.id || '' },
     skip: !ownerId || !selectedShop,
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 30000 // Poll every 30 seconds
   });
 
   const { data: availableBarbersData, loading: availableBarbersLoading } = useQuery(GET_AVAILABLE_BARBERS, {
     variables: { ownerId: ownerId || '', barberShopId: selectedShop?.id || '' },
     skip: !ownerId || !selectedShop || !assignBarberOpen,
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: 'cache-and-network',
+    pollInterval: 30000 // Poll every 30 seconds
   });
 
   // Mutations
   const [updateBarberShop] = useMutation(UPDATE_BARBER_SHOP);
+  const [createBarberShop] = useMutation(CREATE_BARBER_SHOP);
+  const [deleteBarberShop] = useMutation(DELETE_BARBER_SHOP);
   const [assignBarberToShop] = useMutation(ASSIGN_BARBER_TO_SHOP);
   const [unassignBarberFromShop] = useMutation(UNASSIGN_BARBER_FROM_SHOP);
 
@@ -314,9 +367,82 @@ const OwnerDashboard: React.FC = () => {
         }
       });
       setEditShopOpen(false);
+      setNotification({ type: 'success', message: 'Barbershop updated successfully!' });
       refetchShops();
     } catch (error) {
       console.error('Error updating shop:', error);
+      setNotification({ type: 'error', message: 'Failed to update barbershop. Please try again.' });
+    }
+  };
+
+  const handleCreateShop = async () => {
+    if (!ownerId) return;
+
+    // Validate required fields
+    const requiredFields = ['name', 'address', 'city', 'state', 'country'];
+    const missingFields = requiredFields.filter(field => !(createShopForm as any)[field]?.trim());
+    
+    if (missingFields.length > 0) {
+      setNotification({ 
+        type: 'error', 
+        message: `Please fill in required fields: ${missingFields.join(', ')}` 
+      });
+      return;
+    }
+
+    try {
+      // Ensure all required fields have values and trim whitespace
+      const input = {
+        name: createShopForm.name?.trim() || '',
+        address: createShopForm.address?.trim() || '',
+        city: createShopForm.city?.trim() || '',
+        state: createShopForm.state?.trim() || '',
+        country: createShopForm.country?.trim() || '',
+        ownerId: ownerId,
+        // Optional fields
+        description: createShopForm.description?.trim() || null,
+        zipCode: createShopForm.zipCode?.trim() || null,
+        phone: createShopForm.phone?.trim() || null,
+        email: createShopForm.email?.trim() || null,
+        website: createShopForm.website?.trim() || null,
+      };
+
+      await createBarberShop({
+        variables: { input }
+      });
+      
+      setCreateShopOpen(false);
+      setCreateShopForm({ country: 'USA' });
+      setNotification({ type: 'success', message: 'Barbershop created successfully!' });
+      refetchShops();
+    } catch (error) {
+      console.error('Error creating shop:', error);
+      setNotification({ type: 'error', message: 'Failed to create barbershop. Please try again.' });
+    }
+  };
+
+  const handleDeleteShop = (shop: BarberShop) => {
+    setShopToDelete(shop);
+    setDeleteShopOpen(true);
+  };
+
+  const confirmDeleteShop = async () => {
+    if (!shopToDelete) return;
+
+    try {
+      const result = await deleteBarberShop({
+        variables: {
+          id: shopToDelete.id
+        }
+      });
+      console.log('Delete result:', result);
+      setDeleteShopOpen(false);
+      setShopToDelete(null);
+      setNotification({ type: 'success', message: 'Barbershop deactivated successfully!' });
+      refetchShops();
+    } catch (error) {
+      console.error('Error deleting shop:', error);
+      setNotification({ type: 'error', message: 'Failed to delete barbershop. Please try again.' });
     }
   };
 
@@ -376,7 +502,7 @@ const OwnerDashboard: React.FC = () => {
       <Box
         sx={{
           height: 120,
-          background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%)',
+          background: 'linear-gradient(135deg, rgba(201, 169, 110, 0.8) 0%, rgba(228, 196, 154, 0.8) 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -473,30 +599,60 @@ const OwnerDashboard: React.FC = () => {
         </Box>
       </CardContent>
       
-      <CardActions sx={{ p: 2, pt: 0 }}>
+      <CardActions sx={{ p: 2, pt: 0, position: 'relative', zIndex: 10 }}>
         <Button 
-          fullWidth
           variant="outlined"
           startIcon={<Edit />}
           onClick={() => handleEditShop(shop)}
-          sx={{ mr: 1 }}
+          sx={{ mr: 1, flex: 1, pointerEvents: 'auto' }}
         >
           Edit Shop
         </Button>
         <Button 
-          fullWidth
           variant="contained"
           startIcon={<Group />}
           onClick={() => handleManageBarbers(shop)}
+          sx={{ mr: 1, flex: 1, pointerEvents: 'auto' }}
         >
           Manage Team
         </Button>
+        <Tooltip title="Delete Shop">
+          <IconButton 
+            color="error"
+            onClick={() => handleDeleteShop(shop)}
+            sx={{ 
+              border: '1px solid rgba(255, 107, 107, 0.3)',
+              pointerEvents: 'auto',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                transform: 'scale(1.05)',
+              }
+            }}
+          >
+            <Delete />
+          </IconButton>
+        </Tooltip>
       </CardActions>
     </Card>
   );
 
   return (
     <Box>
+      {/* Notification */}
+      {notification && (
+        <Alert 
+          severity={notification.type} 
+          onClose={() => setNotification(null)}
+          sx={{ 
+            mb: 3,
+            borderRadius: '16px',
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          {notification.message}
+        </Alert>
+      )}
+
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
         <Box>
           <Typography variant="h3" component="h1" gutterBottom>
@@ -512,7 +668,7 @@ const OwnerDashboard: React.FC = () => {
       {/* Quick Stats */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={2.4}>
-          <Card sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', height: '100%' }}>
+          <Card sx={{ background: 'linear-gradient(135deg, #C9A96E 0%, #E4C49A 50%, #C9A96E 100%)', color: '#121212', height: '100%' }}>
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box>
@@ -533,7 +689,7 @@ const OwnerDashboard: React.FC = () => {
         </Grid>
         
         <Grid item xs={12} sm={6} md={2.4}>
-          <Card sx={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white', height: '100%' }}>
+          <Card sx={{ background: 'linear-gradient(145deg, rgba(22, 22, 22, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)', color: '#FAFAFA', height: '100%', border: '1px solid rgba(201, 169, 110, 0.3)' }}>
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box>
@@ -554,7 +710,7 @@ const OwnerDashboard: React.FC = () => {
         </Grid>
         
         <Grid item xs={12} sm={6} md={2.4}>
-          <Card sx={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', color: 'white', height: '100%' }}>
+          <Card sx={{ background: 'linear-gradient(145deg, rgba(22, 22, 22, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)', color: '#FAFAFA', height: '100%', border: '1px solid rgba(201, 169, 110, 0.3)' }}>
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box>
@@ -578,7 +734,7 @@ const OwnerDashboard: React.FC = () => {
         </Grid>
         
         <Grid item xs={12} sm={6} md={2.4}>
-          <Card sx={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', color: 'white', height: '100%' }}>
+          <Card sx={{ background: 'linear-gradient(145deg, rgba(22, 22, 22, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)', color: '#FAFAFA', height: '100%', border: '1px solid rgba(201, 169, 110, 0.3)' }}>
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box>
@@ -601,14 +757,16 @@ const OwnerDashboard: React.FC = () => {
         <Grid item xs={12} sm={6} md={2.4}>
           <Card 
             sx={{ 
-              background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', 
-              color: 'white', 
+              background: 'linear-gradient(145deg, rgba(22, 22, 22, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)', 
+              color: '#FAFAFA', 
               height: '100%',
+              border: '1px solid rgba(201, 169, 110, 0.3)',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
               '&:hover': {
                 transform: 'translateY(-4px)',
-                boxShadow: 8,
+                boxShadow: '0 12px 32px rgba(201, 169, 110, 0.2)',
+                border: '1px solid rgba(201, 169, 110, 0.4)',
               }
             }}
             onClick={() => navigate('/owner/earnings')}
@@ -652,17 +810,40 @@ const OwnerDashboard: React.FC = () => {
         </Grid>
       )}
 
+      {/* Floating Action Button */}
+      <Fab
+        color="secondary"
+        aria-label="add barbershop"
+        onClick={() => setCreateShopOpen(true)}
+        sx={{
+          position: 'fixed',
+          bottom: 32,
+          right: 32,
+          zIndex: 1000,
+        }}
+      >
+        <Add />
+      </Fab>
+
       {/* Edit Shop Dialog */}
       <Dialog open={editShopOpen} onClose={() => setEditShopOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>Edit Barber Shop</DialogTitle>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Box display="flex" alignItems="center">
+            <Edit sx={{ mr: 2, color: 'secondary.main' }} />
+            <Typography variant="h6">Edit Barber Shop</Typography>
+          </Box>
+        </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Shop Name"
+                label="Shop Name *"
                 value={editShopForm.name || ''}
                 onChange={(e) => setEditShopForm({...editShopForm, name: e.target.value})}
                 fullWidth
+                required
+                error={!editShopForm.name}
+                helperText={!editShopForm.name ? "Shop name is required" : ""}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -671,6 +852,7 @@ const OwnerDashboard: React.FC = () => {
                 value={editShopForm.phone || ''}
                 onChange={(e) => setEditShopForm({...editShopForm, phone: e.target.value})}
                 fullWidth
+                placeholder="+1 (555) 123-4567"
               />
             </Grid>
             <Grid item xs={12}>
@@ -681,30 +863,41 @@ const OwnerDashboard: React.FC = () => {
                 fullWidth
                 multiline
                 rows={3}
+                placeholder="Tell customers about your barbershop..."
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Address"
+                label="Address *"
                 value={editShopForm.address || ''}
                 onChange={(e) => setEditShopForm({...editShopForm, address: e.target.value})}
                 fullWidth
+                required
+                error={!editShopForm.address}
+                helperText={!editShopForm.address ? "Address is required" : ""}
+                placeholder="123 Main Street"
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="City"
+                label="City *"
                 value={editShopForm.city || ''}
                 onChange={(e) => setEditShopForm({...editShopForm, city: e.target.value})}
                 fullWidth
+                required
+                error={!editShopForm.city}
+                helperText={!editShopForm.city ? "City is required" : ""}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="State"
+                label="State *"
                 value={editShopForm.state || ''}
                 onChange={(e) => setEditShopForm({...editShopForm, state: e.target.value})}
                 fullWidth
+                required
+                error={!editShopForm.state}
+                helperText={!editShopForm.state ? "State is required" : ""}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -713,14 +906,17 @@ const OwnerDashboard: React.FC = () => {
                 value={editShopForm.zipCode || ''}
                 onChange={(e) => setEditShopForm({...editShopForm, zipCode: e.target.value})}
                 fullWidth
+                placeholder="12345"
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Email"
+                type="email"
                 value={editShopForm.email || ''}
                 onChange={(e) => setEditShopForm({...editShopForm, email: e.target.value})}
                 fullWidth
+                placeholder="info@barbershop.com"
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -729,16 +925,207 @@ const OwnerDashboard: React.FC = () => {
                 value={editShopForm.website || ''}
                 onChange={(e) => setEditShopForm({...editShopForm, website: e.target.value})}
                 fullWidth
+                placeholder="https://barbershop.com"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Country"
+                value={editShopForm.country || ''}
+                onChange={(e) => setEditShopForm({...editShopForm, country: e.target.value})}
+                fullWidth
               />
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ p: 3, pt: 2 }}>
           <Button onClick={() => setEditShopOpen(false)} startIcon={<Cancel />}>
             Cancel
           </Button>
-          <Button onClick={handleUpdateShop} variant="contained" startIcon={<Save />}>
+          <Button 
+            onClick={handleUpdateShop} 
+            variant="contained" 
+            startIcon={<Save />}
+            disabled={!editShopForm.name || !editShopForm.address || !editShopForm.city || !editShopForm.state}
+          >
             Save Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Create Shop Dialog */}
+      <Dialog open={createShopOpen} onClose={() => setCreateShopOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Box display="flex" alignItems="center">
+            <Store sx={{ mr: 2, color: 'secondary.main' }} />
+            <Typography variant="h6">Create New Barber Shop</Typography>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Shop Name *"
+                value={createShopForm.name || ''}
+                onChange={(e) => setCreateShopForm({...createShopForm, name: e.target.value})}
+                fullWidth
+                required
+                error={!createShopForm.name}
+                helperText={!createShopForm.name ? "Shop name is required" : ""}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Phone"
+                value={createShopForm.phone || ''}
+                onChange={(e) => setCreateShopForm({...createShopForm, phone: e.target.value})}
+                fullWidth
+                placeholder="+1 (555) 123-4567"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Description"
+                value={createShopForm.description || ''}
+                onChange={(e) => setCreateShopForm({...createShopForm, description: e.target.value})}
+                fullWidth
+                multiline
+                rows={3}
+                placeholder="Tell customers about your barbershop..."
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Address *"
+                value={createShopForm.address || ''}
+                onChange={(e) => setCreateShopForm({...createShopForm, address: e.target.value})}
+                fullWidth
+                required
+                error={!createShopForm.address}
+                helperText={!createShopForm.address ? "Address is required" : ""}
+                placeholder="123 Main Street"
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="City *"
+                value={createShopForm.city || ''}
+                onChange={(e) => setCreateShopForm({...createShopForm, city: e.target.value})}
+                fullWidth
+                required
+                error={!createShopForm.city}
+                helperText={!createShopForm.city ? "City is required" : ""}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="State *"
+                value={createShopForm.state || ''}
+                onChange={(e) => setCreateShopForm({...createShopForm, state: e.target.value})}
+                fullWidth
+                required
+                error={!createShopForm.state}
+                helperText={!createShopForm.state ? "State is required" : ""}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Zip Code"
+                value={createShopForm.zipCode || ''}
+                onChange={(e) => setCreateShopForm({...createShopForm, zipCode: e.target.value})}
+                fullWidth
+                placeholder="12345"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Email"
+                type="email"
+                value={createShopForm.email || ''}
+                onChange={(e) => setCreateShopForm({...createShopForm, email: e.target.value})}
+                fullWidth
+                placeholder="info@barbershop.com"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Website"
+                value={createShopForm.website || ''}
+                onChange={(e) => setCreateShopForm({...createShopForm, website: e.target.value})}
+                fullWidth
+                placeholder="https://barbershop.com"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Country *"
+                value={createShopForm.country || 'USA'}
+                onChange={(e) => setCreateShopForm({...createShopForm, country: e.target.value})}
+                required
+                fullWidth
+                error={!createShopForm.country}
+                helperText={!createShopForm.country ? "Country is required" : ""}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 2 }}>
+          <Button 
+            onClick={() => {
+              setCreateShopOpen(false);
+              setCreateShopForm({});
+            }} 
+            startIcon={<Cancel />}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleCreateShop} 
+            variant="contained" 
+            startIcon={<Save />}
+            disabled={!createShopForm.name || !createShopForm.address || !createShopForm.city || !createShopForm.state || !createShopForm.country}
+          >
+            Create Shop
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteShopOpen} onClose={() => setDeleteShopOpen(false)} maxWidth="sm">
+        <DialogTitle sx={{ pb: 1 }}>
+          <Box display="flex" alignItems="center" color="error.main">
+            <Delete sx={{ mr: 2 }} />
+            <Typography variant="h6">Delete Barber Shop</Typography>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            This action cannot be undone. The barbershop will be deactivated and removed from public view.
+          </Alert>
+          <Typography variant="body1" gutterBottom>
+            Are you sure you want to delete <strong>{shopToDelete?.name}</strong>?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            All associated appointments and data will be preserved but the shop will be inactive.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 2 }}>
+          <Button 
+            onClick={() => {
+              setDeleteShopOpen(false);
+              setShopToDelete(null);
+            }}
+            startIcon={<Cancel />}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={confirmDeleteShop}
+            variant="contained"
+            color="error"
+            startIcon={<Delete />}
+          >
+            Delete Shop
           </Button>
         </DialogActions>
       </Dialog>

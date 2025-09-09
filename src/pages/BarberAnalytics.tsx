@@ -339,7 +339,7 @@ const BarberAnalytics: React.FC = () => {
   const renderQuickStats = () => (
     <Grid container spacing={3} sx={{ mb: 4 }}>
       <Grid item xs={12} sm={6} md={3}>
-        <Card sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+        <Card sx={{ background: 'linear-gradient(135deg, #C9A96E 0%, #E4C49A 50%, #C9A96E 100%)', color: '#121212' }}>
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
@@ -360,7 +360,7 @@ const BarberAnalytics: React.FC = () => {
       </Grid>
       
       <Grid item xs={12} sm={6} md={3}>
-        <Card sx={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white' }}>
+        <Card sx={{ background: 'linear-gradient(145deg, rgba(22, 22, 22, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)', color: '#FAFAFA', border: '1px solid rgba(201, 169, 110, 0.3)' }}>
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
@@ -381,7 +381,7 @@ const BarberAnalytics: React.FC = () => {
       </Grid>
       
       <Grid item xs={12} sm={6} md={3}>
-        <Card sx={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', color: 'white' }}>
+        <Card sx={{ background: 'linear-gradient(145deg, rgba(22, 22, 22, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)', color: '#FAFAFA', border: '1px solid rgba(201, 169, 110, 0.3)' }}>
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
@@ -402,7 +402,7 @@ const BarberAnalytics: React.FC = () => {
       </Grid>
       
       <Grid item xs={12} sm={6} md={3}>
-        <Card sx={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', color: 'white' }}>
+        <Card sx={{ background: 'linear-gradient(145deg, rgba(22, 22, 22, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)', color: '#FAFAFA', border: '1px solid rgba(201, 169, 110, 0.3)' }}>
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
