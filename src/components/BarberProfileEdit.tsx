@@ -158,7 +158,7 @@ interface BarberProfileEditProps {
 
 export const BarberProfileEdit: React.FC<BarberProfileEditProps> = ({ barberId, onProfileUpdated }) => {
   const [activeTab, setActiveTab] = useState<'personal' | 'shop' | 'services' | 'password'>('personal');
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true); // Start with editing enabled
   const [newService, setNewService] = useState({
     name: '',
     description: '',

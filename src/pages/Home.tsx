@@ -121,7 +121,7 @@ const Home: React.FC = () => {
               sx={{ 
                 textAlign: 'center', 
                 mb: 4,
-                fontFamily: '"Playfair Display", serif',
+                fontFamily: '"Inter", "SF Pro Display", sans-serif',
                 fontWeight: 700,
                 fontSize: { xs: '3rem', md: '5rem', lg: '6.5rem' },
                 letterSpacing: '-0.02em',

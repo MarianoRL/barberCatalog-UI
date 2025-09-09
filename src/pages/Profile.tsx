@@ -253,7 +253,7 @@ const Profile: React.FC = () => {
           <Button
             variant="outlined"
             startIcon={<Settings />}
-            onClick={() => navigate('/profile/edit')}
+            onClick={handleEditProfile}
           >
             Account Settings
           </Button>
@@ -261,7 +261,7 @@ const Profile: React.FC = () => {
             <Button
               variant="outlined"
               startIcon={<Business />}
-              onClick={() => navigate('/profile/edit')}
+              onClick={handleEditProfile}
             >
               Manage Services
             </Button>

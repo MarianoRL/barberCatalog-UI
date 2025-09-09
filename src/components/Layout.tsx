@@ -142,7 +142,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
-                  fontFamily: '"Playfair Display", serif',
+                  fontFamily: '"Inter", "SF Pro Display", sans-serif',
                   letterSpacing: '-0.02em',
                   fontSize: 'clamp(1.5rem, 3vw, 2rem)',
                 }}

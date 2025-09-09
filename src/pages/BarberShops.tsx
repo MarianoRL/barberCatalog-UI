@@ -325,12 +325,51 @@ const BarberShops: React.FC = () => {
                     height: '100%',
                     width: '100%',
                     cursor: 'pointer',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
                     display: 'flex',
                     flexDirection: 'column',
+                    backgroundColor: '#161616',
+                    background: 'linear-gradient(145deg, #161616 0%, #1a1a1a 100%)',
+                    boxShadow: '0 16px 64px rgba(0,0,0,0.4), 0 8px 32px rgba(0,0,0,0.3)',
+                    borderRadius: '24px',
+                    border: '1px solid rgba(201, 169, 110, 0.1)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '2px',
+                      background: 'linear-gradient(90deg, transparent, #C9A96E, transparent)',
+                      transform: 'scaleX(0)',
+                      transformOrigin: 'center',
+                      transition: 'transform 0.4s ease',
+                      pointerEvents: 'none',
+                    },
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      background: 'radial-gradient(circle at 50% 0%, rgba(201, 169, 110, 0.05) 0%, transparent 70%)',
+                      opacity: 0,
+                      transition: 'opacity 0.4s ease',
+                      pointerEvents: 'none',
+                    },
                     '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+                      boxShadow: '0 24px 80px rgba(201, 169, 110, 0.2), 0 16px 48px rgba(0,0,0,0.4)',
+                      transform: 'translateY(-8px) scale(1.02)',
+                      border: '1px solid rgba(201, 169, 110, 0.3)',
+                      '&::before': {
+                        transform: 'scaleX(1)',
+                      },
+                      '&::after': {
+                        opacity: 1,
+                      },
                     },
                   }}
                   onClick={() => handleCardClick(shop.id)}
@@ -343,21 +382,44 @@ const BarberShops: React.FC = () => {
                     sx={{ objectFit: 'cover' }}
                   />
                   <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <Typography variant="h6" component="h3" gutterBottom noWrap>
+                    <Typography 
+                      variant="h6" 
+                      component="h3" 
+                      gutterBottom 
+                      noWrap
+                      sx={{ 
+                        color: '#FAFAFA', 
+                        fontWeight: 600,
+                        fontSize: '1.25rem'
+                      }}
+                    >
                       {shop.name}
                     </Typography>
                     
                     <Box display="flex" alignItems="center" gap={1} mb={1}>
-                      <LocationOn fontSize="small" color="disabled" />
-                      <Typography variant="body2" color="text.secondary" noWrap>
+                      <LocationOn fontSize="small" sx={{ color: '#C9A96E' }} />
+                      <Typography variant="body2" sx={{ color: '#B8B8B8' }} noWrap>
                         {shop.address}, {shop.city}, {shop.state}
                       </Typography>
                     </Box>
                     
                     {shop.averageRating && (
                       <Box display="flex" alignItems="center" gap={1} mb={1}>
-                        <Rating value={shop.averageRating} readOnly precision={0.1} size="small" />
-                        <Typography variant="body2" color="text.secondary">
+                        <Rating 
+                          value={shop.averageRating} 
+                          readOnly 
+                          precision={0.1} 
+                          size="small"
+                          sx={{
+                            '& .MuiRating-iconFilled': {
+                              color: '#C9A96E',
+                            },
+                            '& .MuiRating-iconEmpty': {
+                              color: 'rgba(201, 169, 110, 0.3)',
+                            },
+                          }}
+                        />
+                        <Typography variant="body2" sx={{ color: '#B8B8B8' }}>
                           {shop.averageRating.toFixed(1)} ({shop.totalRatings} reviews)
                         </Typography>
                       </Box>
@@ -365,8 +427,8 @@ const BarberShops: React.FC = () => {
                     
                     <Typography
                       variant="body2"
-                      color="text.secondary"
                       sx={{
+                        color: '#B8B8B8',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         display: '-webkit-box',
@@ -374,6 +436,7 @@ const BarberShops: React.FC = () => {
                         WebkitBoxOrient: 'vertical',
                         mb: 2,
                         flex: 1,
+                        lineHeight: 1.5
                       }}
                     >
                       {shop.description || 'Professional barber services'}
@@ -387,15 +450,30 @@ const BarberShops: React.FC = () => {
                           e.stopPropagation();
                           handleCardClick(shop.id);
                         }}
+                        sx={{
+                          background: 'linear-gradient(135deg, #C9A96E 0%, #E4C49A 50%, #C9A96E 100%)',
+                          color: '#121212',
+                          fontWeight: 600,
+                          '&:hover': {
+                            background: 'linear-gradient(135deg, #A8864C 0%, #C9A96E 50%, #A8864C 100%)',
+                            transform: 'translateY(-1px)',
+                          }
+                        }}
                       >
                         View Details
                       </Button>
                       
                       {shop.favoriteCount && shop.favoriteCount > 0 && (
                         <Chip
-                          icon={<Favorite />}
+                          icon={<Favorite sx={{ color: '#C9A96E' }} />}
                           label={shop.favoriteCount}
                           size="small"
+                          sx={{
+                            backgroundColor: 'rgba(201, 169, 110, 0.1)',
+                            color: '#C9A96E',
+                            border: '1px solid rgba(201, 169, 110, 0.3)',
+                            backdropFilter: 'blur(10px)'
+                          }}
                           color="primary"
                           variant="outlined"
                         />

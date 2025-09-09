@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './services/apollo';
@@ -20,6 +20,52 @@ import OwnerDashboard from './pages/OwnerDashboard';
 import OwnerAppointments from './pages/OwnerAppointments';
 import OwnerAnalytics from './pages/OwnerAnalytics';
 import BarberAnalytics from './pages/BarberAnalytics';
+import { isAuthenticated } from './utils/auth';
+
+// Component to handle initial redirect logic
+const AppRouter: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // On app startup, if user is not authenticated and not on auth pages, redirect to login
+    if (!isAuthenticated() && !location.pathname.startsWith('/login') && !location.pathname.startsWith('/register')) {
+      navigate('/login', { replace: true });
+    }
+  }, [navigate, location.pathname]);
+
+  return (
+    <Routes>
+      {/* Public routes without Layout */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      
+      {/* Protected routes with Layout */}
+      <Route path="/*" element={
+        <ProtectedRoute>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/barbershops" element={<BarberShops />} />
+              <Route path="/barbershops/:id" element={<BarberShopDetail />} />
+              <Route path="/barbers" element={<Barbers />} />
+              <Route path="/barbers/:id" element={<BarberDetail />} />
+              <Route path="/bookings" element={<Bookings />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/edit" element={<Profile />} />
+              <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+              <Route path="/owner/appointments" element={<OwnerAppointments />} />
+              <Route path="/owner/analytics" element={<OwnerAnalytics />} />
+              <Route path="/barber/analytics" element={<BarberAnalytics />} />
+            </Routes>
+          </Layout>
+        </ProtectedRoute>
+      } />
+    </Routes>
+  );
+};
 
 function App() {
   return (
@@ -27,35 +73,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
-          <Routes>
-            {/* Public routes without Layout */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            {/* Protected routes with Layout */}
-            <Route path="/*" element={
-              <ProtectedRoute>
-                <Layout>
-                  <Routes>
-                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/barbershops" element={<BarberShops />} />
-                    <Route path="/barbershops/:id" element={<BarberShopDetail />} />
-                    <Route path="/barbers" element={<Barbers />} />
-                    <Route path="/barbers/:id" element={<BarberDetail />} />
-                    <Route path="/bookings" element={<Bookings />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/profile/edit" element={<Profile />} />
-                    <Route path="/owner/dashboard" element={<OwnerDashboard />} />
-                    <Route path="/owner/appointments" element={<OwnerAppointments />} />
-                    <Route path="/owner/analytics" element={<OwnerAnalytics />} />
-                    <Route path="/barber/analytics" element={<BarberAnalytics />} />
-                  </Routes>
-                </Layout>
-              </ProtectedRoute>
-            } />
-          </Routes>
+          <AppRouter />
         </Router>
       </ThemeProvider>
     </ApolloProvider>

@@ -21,7 +21,12 @@ import {
   ListItem,
   ListItemText,
   ListItemAvatar,
-  ListItemSecondaryAction
+  ListItemSecondaryAction,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText
 } from '@mui/material';
 import {
   Person,
@@ -143,11 +148,18 @@ interface UserProfileEditProps {
 
 export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProfileUpdated }) => {
   const [activeTab, setActiveTab] = useState<'personal' | 'bookings' | 'favorites' | 'password'>('personal');
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true); // Start with editing enabled
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
+  });
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    title: '',
+    message: '',
+    shopId: '',
+    onConfirm: () => {}
   });
 
   // Queries
@@ -215,46 +227,90 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
   };
 
   const handleChangePassword = async () => {
+    // Validation
+    if (!passwordData.currentPassword) {
+      alert('Please enter your current password');
+      return;
+    }
+    
+    if (!passwordData.newPassword) {
+      alert('Please enter a new password');
+      return;
+    }
+    
+    if (passwordData.newPassword.length < 8) {
+      alert('New password must be at least 8 characters long');
+      return;
+    }
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       alert('New passwords do not match');
       return;
     }
 
-    if (passwordData.newPassword.length < 6) {
-      alert('New password must be at least 6 characters long');
+    // Check for strong password
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+    if (!strongPasswordRegex.test(passwordData.newPassword)) {
+      alert('Password must contain at least one uppercase letter, one lowercase letter, and one number');
       return;
     }
 
     try {
-      await changePassword({
+      const result = await changePassword({
         variables: {
           id: userId,
           currentPassword: passwordData.currentPassword,
           newPassword: passwordData.newPassword
         }
       });
-      setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-      });
-      alert('Password changed successfully');
+      
+      console.log('Password change result:', result);
+      
+      if (result.data?.changePassword) {
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+        alert('Password changed successfully! Please log in again with your new password.');
+      } else {
+        throw new Error('Password change failed');
+      }
     } catch (error) {
       console.error('Error changing password:', error);
-      alert('Error changing password. Please check your current password.');
+      const errorMessage = (error as any)?.graphQLErrors?.[0]?.message || 'Error changing password. Please check your current password.';
+      alert(errorMessage);
     }
   };
 
-  const handleRemoveFavorite = async (shopId: string) => {
-    try {
-      await removeFavorite({
-        variables: { userId, shopId }
-      });
-      refetchFavorites();
-    } catch (error) {
-      console.error('Error removing favorite:', error);
-      alert('Error removing favorite. Please try again.');
-    }
+  const handleRemoveFavorite = (shopId: string, shopName: string) => {
+    setConfirmDialog({
+      open: true,
+      title: 'Remove Favorite',
+      message: `Are you sure you want to remove "${shopName}" from your favorites?`,
+      shopId,
+      onConfirm: async () => {
+        try {
+          const result = await removeFavorite({
+            variables: { userId, shopId }
+          });
+          
+          console.log('Remove favorite result:', result);
+          
+          if (result.data?.removeFromFavorites) {
+            // Successfully removed
+            await refetchFavorites();
+            alert('Shop removed from favorites successfully!');
+          } else {
+            throw new Error('Failed to remove favorite');
+          }
+        } catch (error) {
+          console.error('Error removing favorite:', error);
+          alert('Error removing favorite. Please try again. Error: ' + (error as any)?.message);
+        }
+        setConfirmDialog({ ...confirmDialog, open: false });
+      }
+    });
   };
 
   const formatDate = (dateString: string) => {
@@ -325,12 +381,29 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
         <Tabs
           value={activeTab}
           onChange={(_, newValue) => setActiveTab(newValue)}
-          sx={{ borderBottom: 1, borderColor: 'divider' }}
+          sx={{ 
+            borderBottom: 1, 
+            borderColor: 'divider',
+            '& .MuiTab-root': {
+              textTransform: 'none',
+              fontSize: '1rem',
+              fontWeight: 600,
+              minHeight: 64,
+              '&.Mui-selected': {
+                color: '#C9A96E'
+              }
+            },
+            '& .MuiTabs-indicator': {
+              backgroundColor: '#C9A96E',
+              height: 3,
+              borderRadius: '3px 3px 0 0'
+            }
+          }}
         >
-          <Tab value="personal" label="Personal Info" icon={<Person />} />
-          <Tab value="bookings" label="My Bookings" icon={<Event />} />
-          <Tab value="favorites" label="Favorites" icon={<BookmarkBorder />} />
-          <Tab value="password" label="Change Password" icon={<Lock />} />
+          <Tab value="personal" label="Personal Info" icon={<Person />} iconPosition="start" />
+          <Tab value="bookings" label="My Bookings" icon={<Event />} iconPosition="start" />
+          <Tab value="favorites" label="Favorites" icon={<BookmarkBorder />} iconPosition="start" />
+          <Tab value="password" label="Change Password" icon={<Lock />} iconPosition="start" />
         </Tabs>
       </Box>
 
@@ -411,8 +484,9 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
                   variant="contained"
                   startIcon={<Edit />}
                   onClick={() => setIsEditing(true)}
+                  size="large"
                 >
-                  Edit Profile
+                  Enable Editing
                 </Button>
               ) : (
                 <>
@@ -421,13 +495,27 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
                     startIcon={<Save />}
                     onClick={handleUpdateUser}
                     disabled={updateUserLoading}
+                    size="large"
                   >
                     {updateUserLoading ? 'Saving...' : 'Save Changes'}
                   </Button>
                   <Button
                     variant="outlined"
                     startIcon={<Cancel />}
-                    onClick={() => setIsEditing(false)}
+                    onClick={() => {
+                      setIsEditing(false);
+                      // Reset form to original values
+                      if (userData?.user) {
+                        const user = userData.user;
+                        setUserForm({
+                          firstName: user.firstName || '',
+                          lastName: user.lastName || '',
+                          phone: user.phone || '',
+                          avatar: user.avatar || ''
+                        });
+                      }
+                    }}
+                    size="large"
                   >
                     Cancel
                   </Button>
@@ -620,7 +708,7 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
                                   variant="outlined"
                                   color="error"
                                   startIcon={<Delete />}
-                                  onClick={() => handleRemoveFavorite(favorite.barberShop.id)}
+                                  onClick={() => handleRemoveFavorite(favorite.barberShop.id, favorite.barberShop.name)}
                                   disabled={removeFavoriteLoading}
                                 >
                                   Remove
@@ -656,6 +744,8 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
                   onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
                   placeholder="Enter your current password"
                   fullWidth
+                  required
+                  helperText="Required to verify your identity"
                 />
               </Grid>
               <Grid item xs={12}>
@@ -664,8 +754,11 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
                   type="password"
                   value={passwordData.newPassword}
                   onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                  placeholder="Enter new password (min 6 characters)"
+                  placeholder="Enter new password (min 8 characters)"
                   fullWidth
+                  required
+                  helperText="Must be at least 8 characters with uppercase, lowercase, and number"
+                  error={passwordData.newPassword.length > 0 && passwordData.newPassword.length < 8}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -676,8 +769,13 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
                   onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
                   placeholder="Confirm new password"
                   fullWidth
+                  required
                   error={passwordData.newPassword !== passwordData.confirmPassword && passwordData.confirmPassword !== ''}
-                  helperText={passwordData.newPassword !== passwordData.confirmPassword && passwordData.confirmPassword !== '' ? 'Passwords do not match' : ''}
+                  helperText={
+                    passwordData.newPassword !== passwordData.confirmPassword && passwordData.confirmPassword !== '' 
+                      ? 'Passwords do not match' 
+                      : 'Re-enter your new password to confirm'
+                  }
                 />
               </Grid>
             </Grid>
@@ -703,6 +801,39 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
           </CardContent>
         </Card>
       )}
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmDialog.open}
+        onClose={() => setConfirmDialog({ ...confirmDialog, open: false })}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
+      >
+        <DialogTitle id="confirm-dialog-title">
+          {confirmDialog.title}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-dialog-description">
+            {confirmDialog.message}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={() => setConfirmDialog({ ...confirmDialog, open: false })}
+            color="primary"
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={confirmDialog.onConfirm}
+            color="error" 
+            variant="contained"
+            autoFocus
+          >
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

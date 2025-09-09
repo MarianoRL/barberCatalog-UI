@@ -241,7 +241,7 @@ const Login: React.FC = () => {
                 <Typography 
                   variant="h4" 
                   sx={{
-                    fontFamily: '"Playfair Display", serif',
+                    fontFamily: '"Inter", "SF Pro Display", sans-serif',
                     fontWeight: 700,
                     background: 'linear-gradient(135deg, #C9A96E 0%, #E4C49A 50%, #FAFAFA 100%)',
                     backgroundClip: 'text',
@@ -258,15 +258,13 @@ const Login: React.FC = () => {
                 variant={isMobile ? 'h3' : 'h2'}
                 mb={4}
                 sx={{
-                  fontFamily: '"Playfair Display", serif',
-                  fontWeight: 700,
                   fontSize: { xs: '2.5rem', md: '3.5rem' },
                   background: 'linear-gradient(135deg, #FAFAFA 0%, #C9A96E 50%, #E4C49A 100%)',
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   lineHeight: 1.1,
-                  letterSpacing: '-0.02em',
+                  letterSpacing: '-0.025em',
                 }}
               >
                 Discover Your Perfect Barber
@@ -342,7 +340,7 @@ const Login: React.FC = () => {
                 mb={4} 
                 sx={{ 
                   color: '#C9A96E',
-                  fontFamily: '"Playfair Display", serif',
+                  fontFamily: '"Inter", "SF Pro Display", sans-serif',
                   fontSize: '1.8rem',
                 }}
               >
@@ -406,7 +404,7 @@ const Login: React.FC = () => {
                 mb={4} 
                 sx={{ 
                   color: '#C9A96E',
-                  fontFamily: '"Playfair Display", serif',
+                  fontFamily: '"Inter", "SF Pro Display", sans-serif',
                   fontSize: '1.8rem',
                 }}
               >
@@ -516,7 +514,7 @@ const Login: React.FC = () => {
                       gutterBottom
                       sx={{
                         color: '#FAFAFA',
-                        fontFamily: '"Playfair Display", serif',
+                        fontFamily: '"Inter", "SF Pro Display", sans-serif',
                         mb: 2,
                       }}
                     >
