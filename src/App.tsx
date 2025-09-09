@@ -21,6 +21,7 @@ import OwnerAppointments from './pages/OwnerAppointments';
 import OwnerAnalytics from './pages/OwnerAnalytics';
 import BarberAnalytics from './pages/BarberAnalytics';
 import { isAuthenticated } from './utils/auth';
+import EnhancedNotifications from './components/EnhancedNotifications';
 
 // Component to handle initial redirect logic
 const AppRouter: React.FC = () => {
@@ -74,6 +75,7 @@ function App() {
         <CssBaseline />
         <Router>
           <AppRouter />
+          <EnhancedNotifications />
         </Router>
       </ThemeProvider>
     </ApolloProvider>

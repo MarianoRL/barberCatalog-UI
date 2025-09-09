@@ -1,4 +1,5 @@
 import React from 'react';
+import FloatingActionEffects from './FloatingActionEffects';
 import {
   AppBar,
   Toolbar,
@@ -560,6 +561,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Typography>
         </Container>
       </Box>
+      
+      {/* Floating Action Effects */}
+      <FloatingActionEffects 
+        showBookingFab={true}
+        showScrollTop={true}
+        showSpeedDial={true}
+        showContactButtons={false}
+      />
     </Box>
   );
 };
