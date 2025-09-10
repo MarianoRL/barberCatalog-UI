@@ -59,6 +59,7 @@ import { useQuery, gql } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays, subMonths } from 'date-fns';
 import { Role, BookingStatus } from '../types';
+import { getCurrentUser } from '../utils/auth';
 
 // GraphQL Queries
 const GET_BARBER_STATS = gql`
@@ -183,19 +184,13 @@ const BarberAnalytics: React.FC = () => {
 
   // Get barber info from localStorage
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.role === Role.BARBER) {
-          setBarberId(payload.userId);
-          setBarberName(`${payload.firstName || ''} ${payload.lastName || ''}`.trim());
-        } else {
-          navigate('/dashboard');
-        }
-      } catch (error) {
-        console.error('Error parsing token:', error);
-        navigate('/login');
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      if (currentUser.role === Role.BARBER) {
+        setBarberId(currentUser.id);
+        setBarberName(`${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || 'Barber');
+      } else {
+        navigate('/dashboard');
       }
     } else {
       navigate('/login');
