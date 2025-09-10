@@ -21,7 +21,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { BarberShop } from '../types';
 import EnhancedBarberCard from '../components/EnhancedBarberCard';
 import EnhancedLoading from '../components/EnhancedLoading';
-import { showSuccessNotification, showInfoNotification } from '../components/EnhancedNotifications';
+import toast from 'react-hot-toast';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -222,10 +222,28 @@ const BarberShops: React.FC = () => {
       const newFavorites = new Set(prev);
       if (newFavorites.has(shopId)) {
         newFavorites.delete(shopId);
-        showInfoNotification('Removed from favorites');
+        toast.success('Removed from favorites! 💔', {
+          duration: 3000,
+          style: {
+            background: 'linear-gradient(135deg, #C9A96E, #E4C49A)',
+            color: '#121212',
+            borderRadius: '20px',
+            fontWeight: 600,
+            boxShadow: '0 8px 32px rgba(201, 169, 110, 0.4)'
+          }
+        });
       } else {
         newFavorites.add(shopId);
-        showSuccessNotification('Added to favorites! ❤️');
+        toast.success('Added to favorites! ❤️', {
+          duration: 3000,
+          style: {
+            background: 'linear-gradient(135deg, #C9A96E, #E4C49A)',
+            color: '#121212',
+            borderRadius: '20px',
+            fontWeight: 600,
+            boxShadow: '0 8px 32px rgba(201, 169, 110, 0.4)'
+          }
+        });
       }
       return newFavorites;
     });

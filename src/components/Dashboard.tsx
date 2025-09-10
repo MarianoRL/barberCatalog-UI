@@ -588,10 +588,29 @@ const Dashboard: React.FC = () => {
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
         <Box>
-          <Typography variant="h3" component="h1" gutterBottom>
+          <Typography 
+            variant="h3" 
+            component="h1" 
+            gutterBottom
+            sx={{
+              color: '#FAFAFA',
+              fontWeight: 700,
+              mb: 2,
+              background: 'linear-gradient(135deg, #FAFAFA 0%, #C9A96E 50%, #E4C49A 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}
+          >
             {getGreeting()}, {userName}!
           </Typography>
-          <Typography variant="h6" color="text.secondary">
+          <Typography 
+            variant="h6" 
+            sx={{
+              color: '#B8B8B8',
+              fontWeight: 400
+            }}
+          >
             {userRole === Role.CUSTOMER ? 'Ready for your next appointment?' : 'Here\'s your schedule overview'}
           </Typography>
         </Box>

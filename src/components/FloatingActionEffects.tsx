@@ -179,51 +179,6 @@ const FloatingActionEffects: React.FC<FloatingActionEffectsProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Notification Badge */}
-      <AnimatePresence>
-        {notifications > 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0, rotate: 180 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            exit={{ opacity: 0, scale: 0, rotate: -180 }}
-            transition={{ duration: 0.4 }}
-            style={{
-              position: 'fixed',
-              top: 90,
-              right: 20,
-              zIndex: 996
-            }}
-          >
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 10 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <Tooltip title="You have new notifications" placement="left">
-                <IconButton
-                  onClick={() => {
-                    setNotifications(0);
-                    showInfoNotification('Notifications cleared! 🔔');
-                  }}
-                  sx={{
-                    backgroundColor: '#ff6b6b',
-                    color: 'white',
-                    boxShadow: '0 8px 32px rgba(255, 107, 107, 0.4)',
-                    '&:hover': {
-                      backgroundColor: '#e55555',
-                      boxShadow: '0 12px 48px rgba(255, 107, 107, 0.6)',
-                    }
-                  }}
-                >
-                  <Badge badgeContent={notifications} color="warning">
-                    <Notifications />
-                  </Badge>
-                </IconButton>
-              </Tooltip>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Floating Decorative Elements */}
       <Box
         sx={{

@@ -160,8 +160,8 @@ export const showCustomNotification = (message: string, type: 'booking' | 'favor
       icon: '📅',
     },
     favorite: {
-      background: 'linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)',
-      color: 'white',
+      background: 'linear-gradient(135deg, #C9A96E 0%, #E4C49A 100%)',
+      color: '#121212',
       icon: '❤️',
     },
     review: {

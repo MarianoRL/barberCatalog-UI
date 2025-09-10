@@ -39,7 +39,6 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { BarberShop } from '../types';
-import toast from 'react-hot-toast';
 import ConfettiExplosion from 'react-confetti-explosion';
 
 interface EnhancedBarberCardProps {
@@ -110,16 +109,6 @@ const EnhancedBarberCard: React.FC<EnhancedBarberCardProps> = ({
       onFavoriteToggle(shop.id);
       if (!isFavorite) {
         setShowConfetti(true);
-        toast.success('Added to favorites! ❤️', {
-          duration: 3000,
-          style: {
-            background: 'linear-gradient(135deg, #C9A96E, #E4C49A)',
-            color: '#121212',
-            borderRadius: '20px',
-            fontWeight: 600,
-            boxShadow: '0 8px 32px rgba(201, 169, 110, 0.4)'
-          }
-        });
         setTimeout(() => setShowConfetti(false), 2000);
       }
     }
@@ -128,14 +117,6 @@ const EnhancedBarberCard: React.FC<EnhancedBarberCardProps> = ({
   const handleQuickBook = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigate(`/barbershops/${shop.id}?book=true`);
-    toast.success('Redirecting to booking...', {
-      style: {
-        background: 'linear-gradient(135deg, #66bb6a, #81c784)',
-        color: 'white',
-        borderRadius: '20px',
-        fontWeight: 600
-      }
-    });
   };
 
   const QuickViewDialog = () => (

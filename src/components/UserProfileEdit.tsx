@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { gql, useQuery, useMutation } from '@apollo/client';
+import { showCustomNotification, showSuccessNotification, showErrorNotification, showInfoNotification } from './EnhancedNotifications';
 import {
   Box,
   Typography,
@@ -222,36 +223,36 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
       refetch();
     } catch (error) {
       console.error('Error updating user:', error);
-      alert('Error updating profile. Please try again.');
+      showErrorNotification('Error updating profile. Please try again.');
     }
   };
 
   const handleChangePassword = async () => {
     // Validation
     if (!passwordData.currentPassword) {
-      alert('Please enter your current password');
+      showErrorNotification('Please enter your current password');
       return;
     }
     
     if (!passwordData.newPassword) {
-      alert('Please enter a new password');
+      showErrorNotification('Please enter a new password');
       return;
     }
     
     if (passwordData.newPassword.length < 8) {
-      alert('New password must be at least 8 characters long');
+      showErrorNotification('New password must be at least 8 characters long');
       return;
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert('New passwords do not match');
+      showErrorNotification('New passwords do not match');
       return;
     }
 
     // Check for strong password
     const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
     if (!strongPasswordRegex.test(passwordData.newPassword)) {
-      alert('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+      showErrorNotification('Password must contain at least one uppercase letter, one lowercase letter, and one number');
       return;
     }
 
@@ -272,14 +273,14 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
           newPassword: '',
           confirmPassword: ''
         });
-        alert('Password changed successfully! Please log in again with your new password.');
+        showSuccessNotification('Password changed successfully! Please log in again with your new password.');
       } else {
         throw new Error('Password change failed');
       }
     } catch (error) {
       console.error('Error changing password:', error);
       const errorMessage = (error as any)?.graphQLErrors?.[0]?.message || 'Error changing password. Please check your current password.';
-      alert(errorMessage);
+      showErrorNotification(errorMessage);
     }
   };
 
@@ -300,13 +301,13 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
           if (result.data?.removeFromFavorites) {
             // Successfully removed
             await refetchFavorites();
-            alert('Shop removed from favorites successfully!');
+            showCustomNotification('Removed from favorites', 'favorite');
           } else {
             throw new Error('Failed to remove favorite');
           }
         } catch (error) {
           console.error('Error removing favorite:', error);
-          alert('Error removing favorite. Please try again. Error: ' + (error as any)?.message);
+          showErrorNotification('Error removing favorite. Please try again.');
         }
         setConfirmDialog({ ...confirmDialog, open: false });
       }
@@ -419,7 +420,7 @@ export const UserProfileEdit: React.FC<UserProfileEditProps> = ({ userId, onProf
                 <Avatar src={userForm.avatar} sx={{ width: 48, height: 48 }}>
                   {userForm.firstName?.charAt(0)}{userForm.lastName?.charAt(0)}
                 </Avatar>
-                <IconButton onClick={() => alert('Upload avatar functionality would go here')}>
+                <IconButton onClick={() => showInfoNotification('Upload avatar functionality would go here')}>
                   <PhotoCamera />
                 </IconButton>
               </Box>
