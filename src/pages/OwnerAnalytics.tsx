@@ -980,15 +980,37 @@ const OwnerAnalytics: React.FC = () => {
   );
 
   return (
-    <Box>
+    <Box sx={{ minHeight: '100vh', pt: 4 }}>
+      <Box sx={{ textAlign: 'center', mb: 6 }}>
+        <Typography
+          variant="h2"
+          component="h1"
+          sx={{
+            color: '#FAFAFA',
+            fontWeight: 700,
+            mb: 2,
+            background: 'linear-gradient(135deg, #FAFAFA 0%, #C9A96E 50%, #E4C49A 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}
+        >
+          Analytics Dashboard
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            color: '#B8B8B8',
+            fontWeight: 400,
+            maxWidth: 600,
+            mx: 'auto'
+          }}
+        >
+          Comprehensive analytics across all your barber shops
+        </Typography>
+      </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
         <Box>
-          <Typography variant="h3" component="h1" gutterBottom>
-            Analytics Dashboard
-          </Typography>
-          <Typography variant="h6" color="text.secondary">
-            Comprehensive analytics across all your barber shops
-          </Typography>
         </Box>
         <Box display="flex" alignItems="center" gap={2}>
           <Zoom in timeout={1000}>

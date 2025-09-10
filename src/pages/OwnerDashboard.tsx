@@ -637,7 +637,7 @@ const OwnerDashboard: React.FC = () => {
   );
 
   return (
-    <Box>
+    <Box sx={{ minHeight: '100vh', pt: 4 }}>
       {/* Notification */}
       {notification && (
         <Alert 
@@ -653,14 +653,36 @@ const OwnerDashboard: React.FC = () => {
         </Alert>
       )}
 
+      <Box sx={{ textAlign: 'center', mb: 6 }}>
+        <Typography
+          variant="h2"
+          component="h1"
+          sx={{
+            color: '#FAFAFA',
+            fontWeight: 700,
+            mb: 2,
+            background: 'linear-gradient(135deg, #FAFAFA 0%, #C9A96E 50%, #E4C49A 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}
+        >
+          Owner Dashboard
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            color: '#B8B8B8',
+            fontWeight: 400,
+            maxWidth: 600,
+            mx: 'auto'
+          }}
+        >
+          Manage your barber shops and team members
+        </Typography>
+      </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
         <Box>
-          <Typography variant="h3" component="h1" gutterBottom>
-            Owner Dashboard
-          </Typography>
-          <Typography variant="h6" color="text.secondary">
-            Manage your barber shops and employees
-          </Typography>
         </Box>
         <Business sx={{ fontSize: 48, color: 'primary.main' }} />
       </Box>

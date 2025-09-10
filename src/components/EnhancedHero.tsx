@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useSpring, animated } from '@react-spring/web';
 import { useInView } from 'react-intersection-observer';
-import { Box, Typography, Button, Container, Grid, Avatar, Card, CardContent } from '@mui/material';
-import { LocationOn, Star, Verified, TrendingUp, Schedule, ContentCut } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Button, Container, Grid, Avatar, Card } from '@mui/material';
+import { LocationOn, Star, Verified, ContentCut } from '@mui/icons-material';
 import Lottie from 'lottie-react';
+import LoginModal from './LoginModal';
 
 // Lottie animation data for scissors (you can replace with actual Lottie files)
 const scissorsAnimation = {
@@ -41,15 +41,14 @@ const scissorsAnimation = {
 };
 
 const EnhancedHero: React.FC = () => {
-  const navigate = useNavigate();
   const { scrollY } = useScroll();
   const [mounted, setMounted] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
   
   // Parallax transforms
   const y1 = useTransform(scrollY, [0, 300], [0, 100]);
   const y2 = useTransform(scrollY, [0, 300], [0, -50]);
-  const opacity = useTransform(scrollY, [0, 300], [1, 0.3]);
 
   // Intersection observers for animations
   const [heroRef, heroInView] = useInView({ triggerOnce: true, threshold: 0.3 });
@@ -212,23 +211,7 @@ const EnhancedHero: React.FC = () => {
               >
                 Discover Your Perfect
                 <Box component="span" sx={{ display: 'block', mt: 1 }}>
-                  <motion.span
-                    animate={{ 
-                      background: [
-                        'linear-gradient(135deg, #C9A96E 0%, #E4C49A 100%)',
-                        'linear-gradient(135deg, #E4C49A 0%, #C9A96E 100%)',
-                        'linear-gradient(135deg, #C9A96E 0%, #E4C49A 100%)'
-                      ]
-                    }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    style={{
-                      backgroundClip: 'text',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent'
-                    }}
-                  >
-                    Barber Experience
-                  </motion.span>
+                  Barber Experience
                 </Box>
               </Typography>
             </motion.div>
@@ -259,7 +242,7 @@ const EnhancedHero: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <Box sx={{ display: 'flex', gap: 3, justifyContent: 'center', flexWrap: 'wrap', mb: 6 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 6 }}>
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -267,17 +250,19 @@ const EnhancedHero: React.FC = () => {
                   <Button
                     variant="contained"
                     size="large"
-                    onClick={() => navigate('/barbershops')}
+                    onClick={() => setLoginModalOpen(true)}
                     sx={{
-                      px: 4,
-                      py: 2,
-                      fontSize: '1.1rem',
+                      px: 6,
+                      py: 2.5,
+                      fontSize: '1.2rem',
                       fontWeight: 600,
                       borderRadius: '50px',
                       background: 'linear-gradient(135deg, #C9A96E 0%, #E4C49A 50%, #C9A96E 100%)',
+                      color: '#121212',
                       boxShadow: '0 12px 48px rgba(201, 169, 110, 0.4), 0 0 0 1px rgba(201, 169, 110, 0.2)',
                       position: 'relative',
                       overflow: 'hidden',
+                      minWidth: '200px',
                       '&::before': {
                         content: '""',
                         position: 'absolute',
@@ -298,38 +283,7 @@ const EnhancedHero: React.FC = () => {
                       }
                     }}
                   >
-                    Explore Barbers
-                  </Button>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    variant="outlined"
-                    size="large"
-                    onClick={() => navigate('/login')}
-                    sx={{
-                      px: 4,
-                      py: 2,
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      borderRadius: '50px',
-                      borderWidth: '2px',
-                      borderColor: '#C9A96E',
-                      color: '#C9A96E',
-                      backgroundColor: 'rgba(201, 169, 110, 0.1)',
-                      backdropFilter: 'blur(20px)',
-                      '&:hover': {
-                        borderColor: '#E4C49A',
-                        backgroundColor: 'rgba(201, 169, 110, 0.2)',
-                        transform: 'translateY(-4px)',
-                        boxShadow: '0 12px 48px rgba(201, 169, 110, 0.3)'
-                      }
-                    }}
-                  >
-                    Join Now
+                    Sign In
                   </Button>
                 </motion.div>
               </Box>
@@ -558,6 +512,12 @@ const EnhancedHero: React.FC = () => {
           50% { transform: translateY(-20px); }
         }
       `}</style>
+
+      {/* Login Modal */}
+      <LoginModal 
+        open={loginModalOpen} 
+        onClose={() => setLoginModalOpen(false)} 
+      />
     </Box>
   );
 };

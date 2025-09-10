@@ -564,9 +564,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       
       {/* Floating Action Effects */}
       <FloatingActionEffects 
-        showBookingFab={true}
         showScrollTop={true}
-        showSpeedDial={true}
         showContactButtons={false}
       />
     </Box>

@@ -603,10 +603,35 @@ const Bookings: React.FC = () => {
   };
 
   return (
-    <Box>
-      <Typography variant="h2" component="h1" gutterBottom>
-        {userRole === Role.CUSTOMER ? 'My Bookings' : 'My Appointments'}
-      </Typography>
+    <Box sx={{ minHeight: '100vh', pt: 4 }}>
+      <Box sx={{ textAlign: 'center', mb: 6 }}>
+        <Typography
+          variant="h2"
+          component="h1"
+          sx={{
+            color: '#FAFAFA',
+            fontWeight: 700,
+            mb: 2,
+            background: 'linear-gradient(135deg, #FAFAFA 0%, #C9A96E 50%, #E4C49A 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}
+        >
+          {userRole === Role.CUSTOMER ? 'All Bookings' : 'All Appointments'}
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            color: '#B8B8B8',
+            fontWeight: 400,
+            maxWidth: 600,
+            mx: 'auto'
+          }}
+        >
+          {userRole === Role.CUSTOMER ? 'Manage your upcoming and past appointments' : 'Track and manage your client appointments'}
+        </Typography>
+      </Box>
       
       <Paper sx={{ mb: 3 }}>
         {userRole === Role.CUSTOMER ? (

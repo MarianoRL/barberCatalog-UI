@@ -12,25 +12,15 @@ import {
   Button,
   Autocomplete,
   Slider,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Paper,
-  Collapse,
-  IconButton,
-  Container,
-  Fade,
-  Zoom
+  Container
 } from '@mui/material';
 import { Search, FilterList, ExpandMore, ExpandLess, TrendingUp, Visibility } from '@mui/icons-material';
 import { useQuery, gql } from '@apollo/client';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { BarberShop } from '../types';
-import EnhancedHero from '../components/EnhancedHero';
 import EnhancedBarberCard from '../components/EnhancedBarberCard';
 import EnhancedLoading from '../components/EnhancedLoading';
-import EnhancedCarousel from '../components/EnhancedCarousel';
 import { showSuccessNotification, showInfoNotification } from '../components/EnhancedNotifications';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -123,7 +113,6 @@ const BarberShops: React.FC = () => {
   const [debouncedFilters, setDebouncedFilters] = useState<SearchFilters>(filters);
   
   // Intersection observer for animations
-  const [heroRef, heroInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [filtersRef, filtersInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [resultsRef, resultsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
@@ -154,8 +143,8 @@ const BarberShops: React.FC = () => {
   const headerSpring = useSpring({
     from: { opacity: 0, transform: 'translateY(-50px)' },
     to: { 
-      opacity: heroInView ? 1 : 0, 
-      transform: heroInView ? 'translateY(0px)' : 'translateY(-50px)' 
+      opacity: filtersInView ? 1 : 0, 
+      transform: filtersInView ? 'translateY(0px)' : 'translateY(-50px)' 
     },
     config: { tension: 280, friction: 60 }
   });
@@ -227,9 +216,6 @@ const BarberShops: React.FC = () => {
     return count;
   };
 
-  const handleCardClick = (shopId: string) => {
-    navigate(`/barbershops/${shopId}`);
-  };
 
   const handleFavoriteToggle = (shopId: string) => {
     setFavorites(prev => {
@@ -245,28 +231,12 @@ const BarberShops: React.FC = () => {
     });
   };
 
-  // Mock featured data for carousel
-  const featuredItems = barberShops.slice(0, 6).map(shop => ({
-    id: shop.id,
-    title: shop.name,
-    description: shop.description || 'Premium barber services with expert stylists.',
-    image: shop.coverPhoto || shop.avatar || '/api/placeholder/400/300',
-    avatar: shop.avatar,
-    rating: shop.averageRating,
-    reviewCount: shop.totalRatings,
-    location: `${shop.city}, ${shop.state}`,
-    badge: shop.isActive ? 'Open Now' : 'Closed',
-    type: 'shop' as const
-  }));
 
   if (loading) {
     return (
-      <Box>
-        <EnhancedLoading type="hero" />
-        <Container maxWidth="lg" sx={{ mt: 4 }}>
-          <EnhancedLoading type="cards" count={6} message="Finding amazing barbers near you..." />
-        </Container>
-      </Box>
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <EnhancedLoading type="cards" count={6} message="Finding amazing barbers near you..." />
+      </Container>
     );
   }
 
@@ -279,26 +249,7 @@ const BarberShops: React.FC = () => {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      {/* Enhanced Hero Section */}
-      <Box ref={heroRef}>
-        <EnhancedHero />
-      </Box>
-      
-      {/* Featured Carousel */}
-      {featuredItems.length > 0 && (
-        <Box sx={{ py: 4 }}>
-          <EnhancedCarousel
-            items={featuredItems}
-            title="Featured Barber Shops"
-            subtitle="Discover the most popular and highly-rated barber shops in your area"
-            type="featured"
-            effect="coverflow"
-            autoplay={true}
-          />
-        </Box>
-      )}
-      
+    <Box sx={{ minHeight: '100vh', pt: 4 }}>
       <Container maxWidth="lg">
         <animated.div ref={filtersRef} style={headerSpring}>
           <motion.div
