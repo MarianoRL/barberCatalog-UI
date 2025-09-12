@@ -1,4 +1,5 @@
 import React from 'react';
+import FloatingActionEffects from './FloatingActionEffects';
 import {
   AppBar,
   Toolbar,
@@ -76,71 +77,110 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           position="fixed" 
           elevation={0}
           sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)',
             backdropFilter: 'blur(20px)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            borderBottom: '2px solid #d4af37',
             zIndex: 1200,
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              bottom: '-2px',
+              left: 0,
+              right: 0,
+              height: '1px',
+              background: 'linear-gradient(90deg, transparent, #d4af37, transparent)',
+            },
           }}
         >
-          <Toolbar sx={{ minHeight: '70px !important' }}>
+          <Toolbar sx={{ minHeight: '80px !important', px: 4 }}>
             <Box 
               sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
                 cursor: 'pointer',
-                mr: 4,
-                transition: 'all 0.3s ease',
+                mr: 6,
+                transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
                 '&:hover': {
-                  transform: 'scale(1.05)',
+                  transform: 'scale(1.02)',
+                  filter: 'drop-shadow(0 0 20px rgba(201, 169, 110, 0.6))',
                 }
               }}
               onClick={() => navigate('/')}
             >
               <Box
                 sx={{
-                  background: 'linear-gradient(45deg, #ffffff 30%, #f0f0f0 90%)',
-                  borderRadius: '50%',
-                  p: 1,
-                  mr: 2,
+                  background: 'linear-gradient(135deg, #C9A96E 0%, #E4C49A 50%, #C9A96E 100%)',
+                  borderRadius: '16px',
+                  p: 1.8,
+                  mr: 3,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  border: '2px solid rgba(201, 169, 110, 0.3)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'linear-gradient(135deg, rgba(201, 169, 110, 0.2), rgba(228, 196, 154, 0.2))',
+                    filter: 'blur(8px)',
+                    zIndex: -1,
+                  },
                 }}
               >
-                <ContentCut sx={{ color: '#667eea', fontSize: 24 }} />
+                <ContentCut sx={{ color: '#121212', fontSize: 32, fontWeight: 'bold' }} />
               </Box>
               <Typography
-                variant="h5"
+                variant="h4"
                 component="div"
                 sx={{ 
-                  fontWeight: 'bold',
-                  background: 'linear-gradient(45deg, #ffffff 30%, #f0f0f0 90%)',
+                  fontWeight: 700,
+                  background: 'linear-gradient(135deg, #C9A96E 0%, #E4C49A 50%, #FAFAFA 100%)',
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
+                  fontFamily: '"Inter", "SF Pro Display", sans-serif',
+                  letterSpacing: '-0.02em',
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
                 }}
               >
-                BarberCatalog
+                LUXE CUTS
               </Typography>
             </Box>
             
-            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 4, ml: 4 }}>
               <Button 
                 color="inherit" 
                 onClick={() => navigate('/barbershops')}
                 startIcon={<Store />}
                 sx={{ 
-                  borderRadius: '25px',
+                  borderRadius: '24px',
                   px: 3,
-                  py: 1,
-                  transition: 'all 0.3s ease',
+                  py: 1.2,
+                  fontWeight: 500,
+                  letterSpacing: '0.5px',
+                  fontFamily: '"Inter", "SF Pro Text", sans-serif',
+                  fontSize: '0.9rem',
+                  textTransform: 'none',
+                  transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                  position: 'relative',
+                  border: '1px solid rgba(201, 169, 110, 0.2)',
+                  backgroundColor: 'rgba(201, 169, 110, 0.05)',
+                  backdropFilter: 'blur(10px)',
                   '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                    backgroundColor: 'rgba(201, 169, 110, 0.15)',
+                    border: '1px solid rgba(201, 169, 110, 0.4)',
                     transform: 'translateY(-2px)',
+                    boxShadow: '0 8px 32px rgba(201, 169, 110, 0.3)',
+                    color: '#E4C49A',
                   }
                 }}
               >
-                Shops
+                Barbershops
               </Button>
               
               <Button 
@@ -148,17 +188,29 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 onClick={() => navigate('/barbers')}
                 startIcon={<Person />}
                 sx={{ 
-                  borderRadius: '25px',
+                  borderRadius: '24px',
                   px: 3,
-                  py: 1,
-                  transition: 'all 0.3s ease',
+                  py: 1.2,
+                  fontWeight: 500,
+                  letterSpacing: '0.5px',
+                  fontFamily: '"Inter", "SF Pro Text", sans-serif',
+                  fontSize: '0.9rem',
+                  textTransform: 'none',
+                  transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                  position: 'relative',
+                  border: '1px solid rgba(201, 169, 110, 0.2)',
+                  backgroundColor: 'rgba(201, 169, 110, 0.05)',
+                  backdropFilter: 'blur(10px)',
                   '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                    backgroundColor: 'rgba(201, 169, 110, 0.15)',
+                    border: '1px solid rgba(201, 169, 110, 0.4)',
                     transform: 'translateY(-2px)',
+                    boxShadow: '0 8px 32px rgba(201, 169, 110, 0.3)',
+                    color: '#E4C49A',
                   }
                 }}
               >
-                Barbers
+                Master Barbers
               </Button>
               
               {isLoggedIn && (
@@ -325,10 +377,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     sx: {
                       mt: 1,
                       minWidth: 200,
-                      borderRadius: 2,
-                      background: 'rgba(255, 255, 255, 0.95)',
+                      borderRadius: '16px',
+                      background: 'rgba(22, 22, 22, 0.95)',
                       backdropFilter: 'blur(20px)',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      border: '1px solid rgba(201, 169, 110, 0.2)',
+                      boxShadow: '0 16px 64px rgba(0,0,0,0.4)',
                     }
                   }}
                 >
@@ -364,10 +417,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     sx: {
                       mt: 1,
                       minWidth: 300,
-                      borderRadius: 2,
-                      background: 'rgba(255, 255, 255, 0.95)',
+                      borderRadius: '16px',
+                      background: 'rgba(22, 22, 22, 0.95)',
                       backdropFilter: 'blur(20px)',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      border: '1px solid rgba(201, 169, 110, 0.2)',
+                      boxShadow: '0 16px 64px rgba(0,0,0,0.4)',
                     }
                   }}
                 >
@@ -422,12 +476,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </AppBar>
       </Slide>
       
-      <Box sx={{ minHeight: '70px' }} /> {/* Spacer for fixed AppBar */}
+      <Box sx={{ minHeight: '80px' }} /> {/* Spacer for fixed AppBar */}
       
       <Box 
         sx={{ 
-          background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%)',
-          minHeight: 'calc(100vh - 70px)',
+          background: 'linear-gradient(135deg, #0A0A0A 0%, #161616 50%, #0A0A0A 100%)',
+          minHeight: 'calc(100vh - 80px)',
           position: 'relative',
           '&::before': {
             content: '""',
@@ -436,8 +490,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 135, 135, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.05) 0%, transparent 50%)',
+            background: `
+              radial-gradient(circle at 25% 75%, rgba(201, 169, 110, 0.08) 0%, transparent 60%), 
+              radial-gradient(circle at 75% 25%, rgba(201, 169, 110, 0.05) 0%, transparent 60%), 
+              radial-gradient(circle at 50% 50%, rgba(201, 169, 110, 0.03) 0%, transparent 50%),
+              linear-gradient(135deg, transparent 0%, rgba(201, 169, 110, 0.01) 50%, transparent 100%)
+            `,
             pointerEvents: 'none'
+          },
+          '&::after': {
+            content: '""',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: `
+              repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 100px,
+                rgba(201, 169, 110, 0.005) 102px
+              )
+            `,
+            pointerEvents: 'none',
+            zIndex: 0,
           }
         }}
       >
@@ -452,18 +529,44 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         component="footer" 
         sx={{ 
           mt: 'auto', 
-          py: 3, 
+          py: 4, 
           px: 2, 
-          backgroundColor: '#f5f5f5',
-          borderTop: '1px solid #e0e0e0'
+          backgroundColor: '#0f0f0f',
+          borderTop: '2px solid #d4af37',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: '-2px',
+            left: 0,
+            right: 0,
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, #d4af37, transparent)',
+          },
         }}
       >
         <Container maxWidth="lg">
-          <Typography variant="body2" color="text.secondary" align="center">
-            © 2024 BarberCatalog. Find your perfect barber.
+          <Typography 
+            variant="body1" 
+            sx={{ 
+              color: '#C9A96E',
+              textAlign: 'center',
+              fontFamily: '"Inter", "SF Pro Display", sans-serif',
+              fontSize: '1rem',
+              fontWeight: 400,
+              letterSpacing: '0.5px',
+            }}
+          >
+            © 2024 LUXE CUTS. Where Luxury Meets Precision.
           </Typography>
         </Container>
       </Box>
+      
+      {/* Floating Action Effects */}
+      <FloatingActionEffects 
+        showScrollTop={true}
+        showContactButtons={false}
+      />
     </Box>
   );
 };

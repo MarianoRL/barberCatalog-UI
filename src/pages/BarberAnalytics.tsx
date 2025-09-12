@@ -59,6 +59,7 @@ import { useQuery, gql } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays, subMonths } from 'date-fns';
 import { Role, BookingStatus } from '../types';
+import { getCurrentUser } from '../utils/auth';
 
 // GraphQL Queries
 const GET_BARBER_STATS = gql`
@@ -183,19 +184,13 @@ const BarberAnalytics: React.FC = () => {
 
   // Get barber info from localStorage
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.role === Role.BARBER) {
-          setBarberId(payload.userId);
-          setBarberName(`${payload.firstName || ''} ${payload.lastName || ''}`.trim());
-        } else {
-          navigate('/dashboard');
-        }
-      } catch (error) {
-        console.error('Error parsing token:', error);
-        navigate('/login');
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      if (currentUser.role === Role.BARBER) {
+        setBarberId(currentUser.id);
+        setBarberName(`${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || 'Barber');
+      } else {
+        navigate('/dashboard');
       }
     } else {
       navigate('/login');
@@ -339,7 +334,7 @@ const BarberAnalytics: React.FC = () => {
   const renderQuickStats = () => (
     <Grid container spacing={3} sx={{ mb: 4 }}>
       <Grid item xs={12} sm={6} md={3}>
-        <Card sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+        <Card sx={{ background: 'linear-gradient(135deg, #C9A96E 0%, #E4C49A 50%, #C9A96E 100%)', color: '#121212' }}>
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
@@ -360,7 +355,7 @@ const BarberAnalytics: React.FC = () => {
       </Grid>
       
       <Grid item xs={12} sm={6} md={3}>
-        <Card sx={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white' }}>
+        <Card sx={{ background: 'linear-gradient(145deg, rgba(22, 22, 22, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)', color: '#FAFAFA', border: '1px solid rgba(201, 169, 110, 0.3)' }}>
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
@@ -381,7 +376,7 @@ const BarberAnalytics: React.FC = () => {
       </Grid>
       
       <Grid item xs={12} sm={6} md={3}>
-        <Card sx={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', color: 'white' }}>
+        <Card sx={{ background: 'linear-gradient(145deg, rgba(22, 22, 22, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)', color: '#FAFAFA', border: '1px solid rgba(201, 169, 110, 0.3)' }}>
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
@@ -402,7 +397,7 @@ const BarberAnalytics: React.FC = () => {
       </Grid>
       
       <Grid item xs={12} sm={6} md={3}>
-        <Card sx={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', color: 'white' }}>
+        <Card sx={{ background: 'linear-gradient(145deg, rgba(22, 22, 22, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%)', color: '#FAFAFA', border: '1px solid rgba(201, 169, 110, 0.3)' }}>
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
@@ -622,15 +617,37 @@ const BarberAnalytics: React.FC = () => {
   );
 
   return (
-    <Box>
+    <Box sx={{ minHeight: '100vh', pt: 4 }}>
+      <Box sx={{ textAlign: 'center', mb: 6 }}>
+        <Typography
+          variant="h2"
+          component="h1"
+          sx={{
+            color: '#FAFAFA',
+            fontWeight: 700,
+            mb: 2,
+            background: 'linear-gradient(135deg, #FAFAFA 0%, #C9A96E 50%, #E4C49A 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}
+        >
+          Analytics Dashboard
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            color: '#B8B8B8',
+            fontWeight: 400,
+            maxWidth: 600,
+            mx: 'auto'
+          }}
+        >
+          Welcome back, {barberName}! Track your performance and insights
+        </Typography>
+      </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
         <Box>
-          <Typography variant="h3" component="h1" gutterBottom>
-            Analytics Dashboard
-          </Typography>
-          <Typography variant="h6" color="text.secondary">
-            Welcome back, {barberName}! Here's your performance overview.
-          </Typography>
         </Box>
         <Box display="flex" alignItems="center" gap={2}>
           <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>

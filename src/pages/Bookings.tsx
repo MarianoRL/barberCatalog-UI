@@ -217,6 +217,7 @@ const RESCHEDULE_BOOKING = gql`
 
 const Bookings: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<BookingStatus | 'ALL'>('ALL');
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<'cancel' | 'reschedule' | 'confirm' | 'start' | 'complete' | null>(null);
@@ -326,7 +327,7 @@ const Bookings: React.FC = () => {
     
     return (
       (booking.status === BookingStatus.PENDING || booking.status === BookingStatus.CONFIRMED) &&
-      hoursUntilBooking > 24
+      hoursUntilBooking > 2 // Reduced from 24 to 2 hours for better usability
     );
   };
 
@@ -338,7 +339,7 @@ const Bookings: React.FC = () => {
     
     return (
       (booking.status === BookingStatus.PENDING || booking.status === BookingStatus.CONFIRMED) &&
-      hoursUntilBooking > 24
+      hoursUntilBooking > 2 // Reduced from 24 to 2 hours for better usability
     );
   };
 
@@ -540,62 +541,148 @@ const Bookings: React.FC = () => {
     </Card>
   );
 
+  const filterBookingsByStatus = (bookings: Booking[]) => {
+    if (statusFilter === 'ALL') {
+      return bookings;
+    }
+    return bookings.filter(booking => booking.status === statusFilter);
+  };
+
   const renderContent = () => {
     if (userRole === Role.CUSTOMER) {
       if (activeTab === 0) {
         // All Bookings
         if (userBookingsLoading) return <CircularProgress />;
-        const bookings = userBookingsData?.bookingsByUser || [];
-        if (bookings.length === 0) {
+        const allBookings = userBookingsData?.bookingsByUser || [];
+        const filteredBookings = filterBookingsByStatus(allBookings);
+        if (filteredBookings.length === 0) {
           return (
             <Alert severity="info" sx={{ mt: 2 }}>
-              You don't have any bookings yet. Book your first appointment!
+              {statusFilter === 'ALL' 
+                ? "You don't have any bookings yet. Book your first appointment!"
+                : `You don't have any ${statusFilter.toLowerCase()} bookings.`
+              }
             </Alert>
           );
         }
-        return bookings.map(renderBookingCard);
+        return filteredBookings.map(renderBookingCard);
       } else {
         // Upcoming Bookings
         if (upcomingBookingsLoading) return <CircularProgress />;
         const upcomingBookings = upcomingBookingsData?.upcomingBookings || [];
-        if (upcomingBookings.length === 0) {
+        const filteredUpcomingBookings = filterBookingsByStatus(upcomingBookings);
+        if (filteredUpcomingBookings.length === 0) {
           return (
             <Alert severity="info" sx={{ mt: 2 }}>
-              You don't have any upcoming bookings.
+              {statusFilter === 'ALL' 
+                ? "You don't have any upcoming bookings."
+                : `You don't have any upcoming ${statusFilter.toLowerCase()} bookings.`
+              }
             </Alert>
           );
         }
-        return upcomingBookings.map(renderBookingCard);
+        return filteredUpcomingBookings.map(renderBookingCard);
       }
     } else {
       // Barber view
       if (barberBookingsLoading) return <CircularProgress />;
-      const bookings = barberBookingsData?.bookingsByBarber || [];
-      if (bookings.length === 0) {
+      const allBookings = barberBookingsData?.bookingsByBarber || [];
+      const filteredBookings = filterBookingsByStatus(allBookings);
+      if (filteredBookings.length === 0) {
         return (
           <Alert severity="info" sx={{ mt: 2 }}>
-            You don't have any bookings yet.
+            {statusFilter === 'ALL' 
+              ? "You don't have any bookings yet."
+              : `You don't have any ${statusFilter.toLowerCase()} bookings.`
+            }
           </Alert>
         );
       }
-      return bookings.map(renderBookingCard);
+      return filteredBookings.map(renderBookingCard);
     }
   };
 
   return (
-    <Box>
-      <Typography variant="h2" component="h1" gutterBottom>
-        {userRole === Role.CUSTOMER ? 'My Bookings' : 'My Appointments'}
-      </Typography>
+    <Box sx={{ minHeight: '100vh', pt: 4 }}>
+      <Box sx={{ textAlign: 'center', mb: 6 }}>
+        <Typography
+          variant="h2"
+          component="h1"
+          sx={{
+            color: '#FAFAFA',
+            fontWeight: 700,
+            mb: 2,
+            background: 'linear-gradient(135deg, #FAFAFA 0%, #C9A96E 50%, #E4C49A 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}
+        >
+          {userRole === Role.CUSTOMER ? 'All Bookings' : 'All Appointments'}
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            color: '#B8B8B8',
+            fontWeight: 400,
+            maxWidth: 600,
+            mx: 'auto'
+          }}
+        >
+          {userRole === Role.CUSTOMER ? 'Manage your upcoming and past appointments' : 'Track and manage your client appointments'}
+        </Typography>
+      </Box>
       
-      {userRole === Role.CUSTOMER && (
-        <Paper sx={{ mb: 3 }}>
-          <Tabs value={activeTab} onChange={(_, value) => setActiveTab(value)}>
-            <Tab label="All Bookings" />
-            <Tab label="Upcoming" />
-          </Tabs>
-        </Paper>
-      )}
+      <Paper sx={{ mb: 3 }}>
+        {userRole === Role.CUSTOMER ? (
+          <Box>
+            <Tabs value={activeTab} onChange={(_, value) => setActiveTab(value)} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tab label="All Bookings" />
+              <Tab label="Upcoming" />
+            </Tabs>
+            <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+              <FormControl sx={{ minWidth: 200 }}>
+                <InputLabel>Filter by Status</InputLabel>
+                <Select
+                  value={statusFilter}
+                  label="Filter by Status"
+                  onChange={(e) => setStatusFilter(e.target.value as BookingStatus | 'ALL')}
+                  size="small"
+                >
+                  <MenuItem value="ALL">All Statuses</MenuItem>
+                  <MenuItem value={BookingStatus.PENDING}>Pending</MenuItem>
+                  <MenuItem value={BookingStatus.CONFIRMED}>Confirmed</MenuItem>
+                  <MenuItem value={BookingStatus.IN_PROGRESS}>In Progress</MenuItem>
+                  <MenuItem value={BookingStatus.COMPLETED}>Completed</MenuItem>
+                  <MenuItem value={BookingStatus.CANCELLED}>Cancelled</MenuItem>
+                  <MenuItem value={BookingStatus.NO_SHOW}>No Show</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Box>
+        ) : (
+          <Box sx={{ p: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>Filter Appointments</Typography>
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Filter by Status</InputLabel>
+              <Select
+                value={statusFilter}
+                label="Filter by Status"
+                onChange={(e) => setStatusFilter(e.target.value as BookingStatus | 'ALL')}
+                size="small"
+              >
+                <MenuItem value="ALL">All Statuses</MenuItem>
+                <MenuItem value={BookingStatus.PENDING}>Pending</MenuItem>
+                <MenuItem value={BookingStatus.CONFIRMED}>Confirmed</MenuItem>
+                <MenuItem value={BookingStatus.IN_PROGRESS}>In Progress</MenuItem>
+                <MenuItem value={BookingStatus.COMPLETED}>Completed</MenuItem>
+                <MenuItem value={BookingStatus.CANCELLED}>Cancelled</MenuItem>
+                <MenuItem value={BookingStatus.NO_SHOW}>No Show</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        )}
+      </Paper>
       
       {renderContent()}
       

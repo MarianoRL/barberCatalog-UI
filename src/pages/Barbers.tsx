@@ -614,10 +614,35 @@ const Barbers: React.FC = () => {
   if (barbersError) return <Alert severity="error">Error loading barbers: {barbersError.message}</Alert>;
 
   return (
-    <Box>
-      <Typography variant="h2" component="h1" gutterBottom>
-        Find Your Perfect Barber
-      </Typography>
+    <Box sx={{ minHeight: '100vh', pt: 4 }}>
+      <Box sx={{ textAlign: 'center', mb: 6 }}>
+        <Typography
+          variant="h2"
+          component="h1"
+          sx={{
+            color: '#FAFAFA',
+            fontWeight: 700,
+            mb: 2,
+            background: 'linear-gradient(135deg, #FAFAFA 0%, #C9A96E 50%, #E4C49A 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}
+        >
+          All Barbers
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            color: '#B8B8B8',
+            fontWeight: 400,
+            maxWidth: 600,
+            mx: 'auto'
+          }}
+        >
+          Discover skilled barbers and book your perfect haircut
+        </Typography>
+      </Box>
       
       {/* Search and Filters */}
       <Paper sx={{ p: 2, mb: 3 }}>

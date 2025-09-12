@@ -1,0 +1,285 @@
+/* Elite Cuts - Premium Barber Shop Styling */
+
+/* Import trendy, clean fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+/* Global Custom Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #d4af37, #f4e4a1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #b8941f, #d4af37);
+}
+
+/* Premium Animation Keyframes */
+@keyframes luxuryFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes goldShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes elegantPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
+  }
+}
+
+@keyframes barberPole {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+/* Premium Text Effects */
+.elite-text-gradient {
+  background: linear-gradient(45deg, #d4af37 30%, #f4e4a1 70%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: goldShimmer 3s linear infinite;
+}
+
+.luxury-shadow {
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(212, 175, 55, 0.3),
+    0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+/* Custom Button Effects */
+.elite-button {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(45deg, #d4af37, #f4e4a1);
+  border: 2px solid #d4af37;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.elite-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.elite-button:hover::before {
+  left: 100%;
+}
+
+.elite-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+}
+
+/* Card Hover Effects */
+.elite-card {
+  position: relative;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+  border: 1px solid #333333;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.elite-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #d4af37, #f4e4a1, #d4af37);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.elite-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
+}
+
+.elite-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Navigation Enhancement */
+.elite-nav-button {
+  position: relative;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.elite-nav-button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #d4af37, #f4e4a1);
+  transition: width 0.3s ease;
+}
+
+.elite-nav-button:hover::after {
+  width: 100%;
+}
+
+/* Input Field Styling */
+.elite-input {
+  background: rgba(26, 26, 26, 0.9);
+  border: 2px solid #d4af37;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.elite-input:focus {
+  box-shadow: 
+    0 0 20px rgba(212, 175, 55, 0.5),
+    inset 0 0 10px rgba(212, 175, 55, 0.1);
+  border-color: #f4e4a1;
+}
+
+/* Loading Animation */
+.elite-loader {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(212, 175, 55, 0.3);
+  border-radius: 50%;
+  border-top-color: #d4af37;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Barber Pole Effect */
+.barber-pole {
+  background: repeating-linear-gradient(
+    45deg,
+    #d4af37,
+    #d4af37 10px,
+    #ffffff 10px,
+    #ffffff 20px,
+    #1a1a1a 20px,
+    #1a1a1a 30px
+  );
+  background-size: 60px 60px;
+  animation: barberPole 2s linear infinite;
+}
+
+/* Luxury Divider */
+.luxury-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  margin: 2rem 0;
+  position: relative;
+}
+
+.luxury-divider::before {
+  content: '♦';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1a1a1a;
+  color: #d4af37;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+  .elite-text-gradient {
+    font-size: 2.5rem;
+  }
+  
+  .elite-button {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .elite-text-gradient {
+    -webkit-text-fill-color: #d4af37;
+    color: #d4af37;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .elite-card {
+    border: 2px solid #d4af37;
+  }
+  
+  .elite-text-gradient {
+    -webkit-text-fill-color: #d4af37;
+    color: #d4af37;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

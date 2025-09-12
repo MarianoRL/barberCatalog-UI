@@ -69,6 +69,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { format, parseISO } from 'date-fns';
 import { Role } from '../types';
+import { getCurrentUser } from '../utils/auth';
 
 // GraphQL Queries
 const GET_BARBER_SHOP_DETAILS = gql`
@@ -281,15 +282,10 @@ const BarberShopDetail: React.FC = () => {
 
   // Get user info from localStorage
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setUserRole(payload.role);
-        setUserId(payload.userId);
-      } catch (error) {
-        console.error('Error parsing token:', error);
-      }
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      setUserRole(currentUser.role);
+      setUserId(currentUser.id);
     }
   }, []);
 
@@ -496,64 +492,154 @@ const BarberShopDetail: React.FC = () => {
       {/* Cover Photo */}
       <Box
         sx={{
-          height: 300,
-          backgroundImage: `url(${shop.coverPhoto || '/api/placeholder/1200/300'})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          borderRadius: 2,
+          p: 0,
+          background: `
+            linear-gradient(145deg, 
+              rgba(10, 10, 10, 0.95) 0%, 
+              rgba(22, 22, 22, 0.9) 25%,
+              rgba(201, 169, 110, 0.15) 50%,
+              rgba(22, 22, 22, 0.9) 75%, 
+              rgba(10, 10, 10, 0.95) 100%
+            ),
+            radial-gradient(circle at 30% 20%, rgba(201, 169, 110, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 70% 80%, rgba(228, 196, 154, 0.15) 0%, transparent 50%),
+            linear-gradient(135deg, #0A0A0A 0%, #161616 100%)
+          `,
+          borderRadius: 3,
+          border: '1px solid rgba(201, 169, 110, 0.3)',
+          boxShadow: `
+            0 20px 60px rgba(0, 0, 0, 0.4),
+            0 8px 32px rgba(201, 169, 110, 0.1),
+            inset 0 1px 0 rgba(201, 169, 110, 0.2)
+          `,
           position: 'relative',
-          display: 'flex',
-          alignItems: 'end',
-          background: shop.coverPhoto ? undefined : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-        }}
-      >
-        <Box
-          sx={{
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
             position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
+            height: '2px',
+            background: 'linear-gradient(90deg, transparent, #C9A96E, #E4C49A, #C9A96E, transparent)',
+            pointerEvents: 'none',
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
             bottom: 0,
-            background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
-            borderRadius: 2
-          }}
-        />
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          <Box sx={{ p: 3, color: 'white' }}>
-            <Box display="flex" alignItems="center" mb={2}>
-              <Avatar
-                src={shop.avatar}
-                sx={{ width: 80, height: 80, mr: 3, border: '3px solid white' }}
-              />
-              <Box>
-                <Typography variant="h3" component="h1" gutterBottom sx={{ color: 'white', fontWeight: 'bold' }}>
-                  {shop.name}
-                </Typography>
-                <Box display="flex" alignItems="center" gap={2}>
-                  <Box display="flex" alignItems="center">
-                    <Star sx={{ color: '#ffeb3b', mr: 0.5 }} />
-                    <Typography variant="h6" sx={{ color: 'white' }}>
-                      {shop.averageRating ? shop.averageRating.toFixed(1) : 'N/A'}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', ml: 1 }}>
-                      ({shop.totalRatings || 0} reviews)
-                    </Typography>
-                  </Box>
-                  <Box display="flex" alignItems="center">
-                    <Favorite sx={{ color: '#f50057', mr: 0.5 }} />
-                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)' }}>
-                      {shop.favoriteCount || 0} favorites
-                    </Typography>
-                  </Box>
+            left: 0,
+            right: 0,
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.5), transparent)',
+            pointerEvents: 'none',
+          }
+        }}
+      >
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, py: 5, px: 4 }}>
+          <Box display="flex" alignItems="center" mb={4}>
+            <Avatar
+              src={shop.avatar}
+              sx={{ 
+                width: 140, 
+                height: 140, 
+                mr: 4, 
+                border: '3px solid #C9A96E',
+                boxShadow: '0 8px 32px rgba(201, 169, 110, 0.3)'
+              }}
+            >
+              {shop.name?.charAt(0)}
+            </Avatar>
+            <Box flex={1}>
+              <Typography 
+                variant="h2" 
+                component="h1" 
+                gutterBottom 
+                sx={{ 
+                  color: '#FAFAFA', 
+                  fontWeight: 700,
+                  textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
+                  background: 'linear-gradient(135deg, #FAFAFA 0%, #C9A96E 50%, #E4C49A 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}
+              >
+                {shop.name}
+              </Typography>
+              <Box display="flex" alignItems="center" gap={4} mb={3}>
+                <Box display="flex" alignItems="center">
+                  <Star sx={{ color: '#C9A96E', mr: 0.5, fontSize: 32 }} />
+                  <Typography variant="h4" sx={{ color: '#FAFAFA', fontWeight: 600 }}>
+                    {shop.averageRating ? shop.averageRating.toFixed(1) : 'N/A'}
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: '#B8B8B8', ml: 1, fontSize: '1.1rem' }}>
+                    ({shop.totalRatings || 0} reviews)
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center">
+                  <LocationOn sx={{ color: '#C9A96E', mr: 0.5, fontSize: 24 }} />
+                  <Typography variant="body1" sx={{ color: '#FAFAFA', fontSize: '1.1rem' }}>
+                    {shop.city}, {shop.state}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center">
+                  <Favorite sx={{ color: '#C9A96E', mr: 0.5, fontSize: 24 }} />
+                  <Typography variant="body1" sx={{ color: '#FAFAFA', fontSize: '1.1rem' }}>
+                    {shop.favoriteCount || 0} favorites
+                  </Typography>
                 </Box>
               </Box>
+              
+              {/* Shop Status */}
+              <Chip 
+                label={shop.isActive ? 'Open' : 'Closed'} 
+                color={shop.isActive ? 'success' : 'error'}
+                sx={{ 
+                  fontSize: '1.1rem', 
+                  py: 1.5, 
+                  px: 3,
+                  fontWeight: 600,
+                  background: shop.isActive 
+                    ? 'linear-gradient(135deg, #66bb6a 0%, #81c784 100%)'
+                    : 'linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)'
+                }}
+              />
             </Box>
           </Box>
+          
+          
+          {/* Shop Description */}
+          {shop.description && (
+            <Box sx={{ 
+              p: 3, 
+              borderRadius: 2, 
+              background: 'rgba(201, 169, 110, 0.1)', 
+              border: '1px solid rgba(201, 169, 110, 0.2)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              <Typography variant="h5" gutterBottom sx={{ 
+                color: '#C9A96E', 
+                fontWeight: 600,
+                mb: 2
+              }}>
+                About Us
+              </Typography>
+              <Typography variant="body1" sx={{ 
+                color: '#FAFAFA', 
+                fontSize: '1.1rem',
+                lineHeight: 1.7
+              }}>
+                {shop.description}
+              </Typography>
+            </Box>
+          )}
         </Container>
       </Box>
 
       {/* Action Buttons */}
-      <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+      <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
         <Stack direction="row" spacing={1}>
           {userId && !userReview && (
             <Tooltip title="Write a review">
@@ -976,7 +1062,35 @@ const BarberShopDetail: React.FC = () => {
       
       <Container maxWidth="lg">
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-          <Tabs value={tabValue} onChange={handleTabChange} aria-label="shop details tabs">
+          <Tabs 
+            value={tabValue} 
+            onChange={handleTabChange} 
+            aria-label="shop details tabs"
+            sx={{ 
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                minHeight: 64,
+                color: '#B8B8B8',
+                '&.Mui-selected': {
+                  color: '#FAFAFA',
+                  backgroundColor: 'rgba(201, 169, 110, 0.15)',
+                  borderRadius: '12px 12px 0 0',
+                  border: '1px solid rgba(201, 169, 110, 0.3)',
+                  borderBottom: 'none',
+                }
+              },
+              '& .MuiTabs-indicator': {
+                backgroundColor: '#C9A96E',
+                height: 3,
+                borderRadius: '3px 3px 0 0'
+              },
+              '& .MuiTabs-flexContainer': {
+                gap: '8px'
+              }
+            }}
+          >
             <Tab label="Overview" {...a11yProps(0)} />
             <Tab label="Our Team" {...a11yProps(1)} />
             <Tab label="Services" {...a11yProps(2)} />

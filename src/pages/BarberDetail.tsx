@@ -341,53 +341,133 @@ const BarberDetail: React.FC = () => {
     <Box sx={{ position: 'relative', mb: 4 }}>
       <Paper
         sx={{
-          p: 4,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
-          borderRadius: 2
+          p: 0,
+          background: `
+            linear-gradient(145deg, 
+              rgba(10, 10, 10, 0.95) 0%, 
+              rgba(22, 22, 22, 0.9) 25%,
+              rgba(201, 169, 110, 0.15) 50%,
+              rgba(22, 22, 22, 0.9) 75%, 
+              rgba(10, 10, 10, 0.95) 100%
+            ),
+            radial-gradient(circle at 30% 20%, rgba(201, 169, 110, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 70% 80%, rgba(228, 196, 154, 0.15) 0%, transparent 50%),
+            linear-gradient(135deg, #0A0A0A 0%, #161616 100%)
+          `,
+          borderRadius: 3,
+          border: '1px solid rgba(201, 169, 110, 0.3)',
+          boxShadow: `
+            0 20px 60px rgba(0, 0, 0, 0.4),
+            0 8px 32px rgba(201, 169, 110, 0.1),
+            inset 0 1px 0 rgba(201, 169, 110, 0.2)
+          `,
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '2px',
+            background: 'linear-gradient(90deg, transparent, #C9A96E, #E4C49A, #C9A96E, transparent)',
+            pointerEvents: 'none',
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.5), transparent)',
+            pointerEvents: 'none',
+          }
         }}
       >
-        <Container maxWidth="lg">
-          <Box display="flex" alignItems="center" mb={3}>
+        <Container maxWidth="lg" sx={{ py: 5, px: 4 }}>
+          <Box display="flex" alignItems="center" mb={4}>
             <Avatar
               src={barber.avatar}
-              sx={{ width: 120, height: 120, mr: 4, border: '4px solid white' }}
+              sx={{ 
+                width: 140, 
+                height: 140, 
+                mr: 4, 
+                border: '3px solid #C9A96E',
+                boxShadow: '0 8px 32px rgba(201, 169, 110, 0.3)'
+              }}
             />
             <Box flex={1}>
-              <Typography variant="h2" component="h1" gutterBottom sx={{ color: 'white', fontWeight: 'bold' }}>
+              <Typography 
+                variant="h2" 
+                component="h1" 
+                gutterBottom 
+                sx={{ 
+                  color: '#FAFAFA', 
+                  fontWeight: 700,
+                  textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
+                  background: 'linear-gradient(135deg, #FAFAFA 0%, #C9A96E 50%, #E4C49A 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}
+              >
                 {barber.firstName} {barber.lastName}
               </Typography>
-              <Box display="flex" alignItems="center" gap={3} mb={2}>
+              <Box display="flex" alignItems="center" gap={4} mb={3}>
                 <Box display="flex" alignItems="center">
-                  <Star sx={{ color: '#ffeb3b', mr: 0.5, fontSize: 28 }} />
-                  <Typography variant="h5" sx={{ color: 'white' }}>
+                  <Star sx={{ color: '#C9A96E', mr: 0.5, fontSize: 32 }} />
+                  <Typography variant="h4" sx={{ color: '#FAFAFA', fontWeight: 600 }}>
                     {barber.averageRating ? barber.averageRating.toFixed(1) : 'N/A'}
                   </Typography>
-                  <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.8)', ml: 1 }}>
+                  <Typography variant="body1" sx={{ color: '#B8B8B8', ml: 1, fontSize: '1.1rem' }}>
                     ({barber.totalRatings || 0} reviews)
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center">
-                  <Schedule sx={{ color: 'white', mr: 0.5 }} />
-                  <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+                  <Schedule sx={{ color: '#C9A96E', mr: 0.5, fontSize: 24 }} />
+                  <Typography variant="body1" sx={{ color: '#FAFAFA', fontSize: '1.1rem' }}>
                     {barber.experienceYears} years experience
                   </Typography>
                 </Box>
               </Box>
               <Chip 
                 label={barber.isActive ? 'Available' : 'Unavailable'} 
-                color={barber.isActive ? 'success' : 'default'}
-                sx={{ fontSize: '1rem', py: 1, px: 2 }}
+                color={barber.isActive ? 'success' : 'error'}
+                sx={{ 
+                  fontSize: '1.1rem', 
+                  py: 1.5, 
+                  px: 3,
+                  fontWeight: 600,
+                  background: barber.isActive 
+                    ? 'linear-gradient(135deg, #66bb6a 0%, #81c784 100%)'
+                    : 'linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)'
+                }}
               />
             </Box>
           </Box>
           
           {barber.specialties && (
-            <Box>
-              <Typography variant="h6" gutterBottom sx={{ color: 'rgba(255,255,255,0.9)' }}>
-                Specialties:
+            <Box sx={{ 
+              p: 3, 
+              borderRadius: 2, 
+              background: 'rgba(201, 169, 110, 0.1)', 
+              border: '1px solid rgba(201, 169, 110, 0.2)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              <Typography variant="h5" gutterBottom sx={{ 
+                color: '#C9A96E', 
+                fontWeight: 600,
+                mb: 2
+              }}>
+                Specialties
               </Typography>
-              <Typography variant="body1" sx={{ color: 'white' }}>
+              <Typography variant="body1" sx={{ 
+                color: '#FAFAFA', 
+                fontSize: '1.1rem',
+                lineHeight: 1.7
+              }}>
                 {barber.specialties}
               </Typography>
             </Box>
